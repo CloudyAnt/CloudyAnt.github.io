@@ -121,13 +121,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-count">4</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
   </nav>
@@ -197,7 +197,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-03-07 09:33:40" itemprop="dateModified" datetime="2026-03-07T09:33:40+00:00">2026-03-07</time>
+      <time title="Modified: 2026-03-11 07:43:36" itemprop="dateModified" datetime="2026-03-11T07:43:36+00:00">2026-03-11</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -220,6 +220,98 @@
     
     <div class="post-body" itemprop="articleBody">
           <h2 id="此站点正在施工中。查看关于页面查看更多信息。-This-site-is-under-construction-Check-out-the-About-page-for-more-info"><a href="#此站点正在施工中。查看关于页面查看更多信息。-This-site-is-under-construction-Check-out-the-About-page-for-more-info" class="headerlink" title="此站点正在施工中。查看关于页面查看更多信息。| This site is under construction. Check out the About page for more info."></a>此站点正在施工中。查看<a href="/about">关于</a>页面查看更多信息。| This site is under construction. Check out the <a href="/about">About</a> page for more info.</h2>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://cloudyant.github.io/2026/03/11/FontCharsetEncoding/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="柴家琪(CHAI Jiaqi)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="柴家琪的博客 | Blog of ChaiJiaqi">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | 柴家琪的博客 | Blog of ChaiJiaqi">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/03/11/FontCharsetEncoding/" class="post-title-link" itemprop="url">Font, Charset & Encoding</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2026-03-11 13:05:00 / Modified: 07:43:36" itemprop="dateCreated datePublished" datetime="2026-03-11T13:05:00+00:00">2026-03-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Encoding/" itemprop="url" rel="index"><span itemprop="name">Encoding</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>For text shown on the internet (blogs, instant messages, etc.), have you ever wondered how it is displayed?</p>
+<p>It relates to three basic concepts, from frontend to backend: <strong>Font</strong>, <strong>Character set (charset)</strong>, and <strong>Encoding</strong>.</p>
+<h2 id="Font"><a href="#Font" class="headerlink" title="Font"></a>Font</h2><p>On digital devices, text is ultimately rendered into images (a matrix of pixels). A <strong>font</strong> describes how characters are drawn.</p>
+<p>A font typically stores outlines as vector graphics (often Bézier curves), so glyphs can be drawn at many sizes and in different styles.</p>
+<p>Common font file types are <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/OpenType">OpenType (OTF)</a>, <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/TrueType">TrueType (TTF)</a>, and <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Web_Open_Font_Format">WOFF&#x2F;WOFF2</a>.</p>
+<h2 id="Character-set-charset"><a href="#Character-set-charset" class="headerlink" title="Character set (charset)"></a>Character set (charset)</h2><p>How does a program know which glyph in the font to draw?</p>
+<p>You need a mapping between <strong>characters</strong> and numbers. Take Unicode as an example, each character is assigned a <strong>code point</strong> (for example, <code>你</code> is <code>U+4F60</code>, and <code>A</code> is <code>U+0041</code>).</p>
+<p>Fonts don’t store “characters” directly; they store <strong>glyphs</strong> (shapes). A font’s <strong>cmap</strong> table maps <strong>code points → glyphs</strong>. Not every glyph necessarily has its own code point (for example, ligatures and stylistic alternates).</p>
+<p>A charset is not a physical thing; it’s a standard&#x2F;specification that everyone follows. The most widely used character set today is <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Unicode">Unicode</a>. Older&#x2F;legacy character sets include <em>ASCII</em> and many regional standards.</p>
+<h2 id="Encoding"><a href="#Encoding" class="headerlink" title="Encoding"></a>Encoding</h2><p>Computers store and transmit <strong>bytes</strong>, so we need an <strong>encoding</strong>: a rule for turning code points into bytes (and back). Without knowing the encoding, a byte sequence can’t be interpreted correctly.</p>
+<p>Some encodings are fixed-length (for example, <strong>UTF-32</strong> uses 4 bytes per code point). Others are variable-length: <strong>UTF-8</strong> uses 1–4 bytes, and <strong>UTF-16</strong> uses 2 or 4 bytes (surrogate pairs for code points above <code>U+FFFF</code>). Variable-length encodings are efficient for common text, especially when most characters are in the ASCII range.</p>
+<p>The most common encoding on the web is <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/UTF-8">UTF-8</a>, a Unicode-based variable-length encoding. For example, <code>你</code> (<code>U+4F60</code>) is encoded in UTF-8 as the bytes <code>E4 BD A0</code> (hex).</p>
+<hr>
+<p>This article demonstrates the three basic concepts behind text rendering. In real systems there are more steps, like shaping, layout&#x2F;positioning, and rasterization.</p>
+
       
     </div>
 
@@ -273,9 +365,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
-      
 
-      <time title="Created: 2026-03-07 17:24:31 / Modified: 09:33:40" itemprop="dateCreated datePublished" datetime="2026-03-07T17:24:31+00:00">2026-03-07</time>
+      <time title="Created: 2026-03-07 17:24:31" itemprop="dateCreated datePublished" datetime="2026-03-07T17:24:31+00:00">2026-03-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2026-03-11 07:43:36" itemprop="dateModified" datetime="2026-03-11T07:43:36+00:00">2026-03-11</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -297,21 +395,24 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="概念概述"><a href="#概念概述" class="headerlink" title="概念概述"></a>概念概述</h2><ol>
+          <blockquote>
+<p>Inspired by this <a target="_blank" rel="noopener" href="https://www.promptingguide.ai/techniques">site</a><br>Last updated at: 2026-03-07</p>
+</blockquote>
+<h2 id="概念概述"><a href="#概念概述" class="headerlink" title="概念概述"></a>概念概述</h2><ol>
 <li>Zero Shot 直接提问</li>
 <li>Few Shot 给出问答示例，然后提问</li>
 <li>Chain-of-Thought Prompting 思考链提示。ZeroShot-CoT 是添加一行 “Let’s think step by step”，FewShot-CoT 是在示例回答中添加思考步骤</li>
 <li>Auto CoT。阶段一，模型将数据集中的问题按语义进行分组，从每组中采样代表性问题，使用 ZeroShot-CoT 为挑选的问题生成推理路径。阶段二，从示例库中挑选问题作为 FewShot，可添加 ZeroShot-CoT</li>
 <li>Meta Prompting 元提示。结构化输入，引导结构化输出</li>
 <li>Self Consistency 自我一致性。多次输出，少数服从多数。用于提高结果准确度</li>
-<li>Generated Knowledge Prompting  先让模型生成知识，再回答问题。前提是假设模型内部已有相关知识</li>
+<li>Generated Knowledge Prompting 先让模型生成知识，再回答问题。前提是假设模型内部已有相关知识</li>
 <li>Prompt Chaining 提示链。拆解任务，将前面任务输出作为后面任务的 Prompt 的输入</li>
 <li>Tree of Thoughts 思考树。不同于 CoT，对于每一步输出都要求给出多个输出，选择正确输出并继续</li>
 <li>Retrieval Augmented Generation。向量检索相关内容并作为上下文传给模型</li>
 <li>Automatic Reasoning and Tool-use (ART)。类似于 Auto CoT，不同的是，它问题检索范围较为精确，而且强调工具调用能力</li>
 <li>Automatic Prompt Engineer (APE)。模型遵循生成-评估-迭代闭环来自主更新优化 Prompt。多发生在离线优化时，也可以在 pre-response 时优化用户输入，以及在 post-response 后验证输出并迭代</li>
 <li>Active-Prompt。让模型挑出最难或不确定的问题，由人类进行标注。用以提升复杂、垂直领域的准确率</li>
-<li>Directional Stimulus Prompting (DSP)。 先生成暗示（Hint&#x2F;Stimulus），再用这个暗示来引导模型生成最终结果。 </li>
+<li>Directional Stimulus Prompting (DSP)。 先生成暗示（Hint&#x2F;Stimulus），再用这个暗示来引导模型生成最终结果。</li>
 <li>PAL (Program-Aided Language Models)。类似于 CoT，但是解决步骤是以编程语言形式展示，在模型输出后，需要调用对应的运行时计算出结果</li>
 <li>ReAct Prompting。模型按思考-行动-观察循环逻辑工作，强调外部交互。为 ART 提供了逻辑框架</li>
 <li>Reflexion 反思。Actor 执行，Evaluator 打分或检测，有问题则交给 Self-Reflection 重新审视并在下轮优化</li>
@@ -379,7 +480,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-03-07 09:33:40" itemprop="dateModified" datetime="2026-03-07T09:33:40+00:00">2026-03-07</time>
+      <time title="Modified: 2026-03-11 07:43:36" itemprop="dateModified" datetime="2026-03-11T07:43:36+00:00">2026-03-11</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">

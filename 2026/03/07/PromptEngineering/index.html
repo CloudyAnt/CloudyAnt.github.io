@@ -20,15 +20,15 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"cloudyant.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="概念概述 Zero Shot 直接提问 Few Shot 给出问答示例，然后提问 Chain-of-Thought Prompting 思考链提示。ZeroShot-CoT 是添加一行 “Let’s think step by step”，FewShot-CoT 是在示例回答中添加思考步骤 Auto CoT。阶段一，模型将数据集中的问题按语义进行分组，从每组中采样代表性问题，使用 ZeroShot">
+    <meta name="description" content="Inspired by this siteLast updated at: 2026-03-07  概念概述 Zero Shot 直接提问 Few Shot 给出问答示例，然后提问 Chain-of-Thought Prompting 思考链提示。ZeroShot-CoT 是添加一行 “Let’s think step by step”，FewShot-CoT 是在示例回答中添加思考步骤 Aut">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Prompt Engineering">
 <meta property="og:url" content="https://cloudyant.github.io/2026/03/07/PromptEngineering/index.html">
 <meta property="og:site_name" content="柴家琪的博客 | Blog of ChaiJiaqi">
-<meta property="og:description" content="概念概述 Zero Shot 直接提问 Few Shot 给出问答示例，然后提问 Chain-of-Thought Prompting 思考链提示。ZeroShot-CoT 是添加一行 “Let’s think step by step”，FewShot-CoT 是在示例回答中添加思考步骤 Auto CoT。阶段一，模型将数据集中的问题按语义进行分组，从每组中采样代表性问题，使用 ZeroShot">
+<meta property="og:description" content="Inspired by this siteLast updated at: 2026-03-07  概念概述 Zero Shot 直接提问 Few Shot 给出问答示例，然后提问 Chain-of-Thought Prompting 思考链提示。ZeroShot-CoT 是添加一行 “Let’s think step by step”，FewShot-CoT 是在示例回答中添加思考步骤 Aut">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2026-03-07T17:24:31.000Z">
-<meta property="article:modified_time" content="2026-03-07T09:33:40.492Z">
+<meta property="article:modified_time" content="2026-03-11T07:43:36.128Z">
 <meta property="article:author" content="柴家琪(CHAI Jiaqi)">
 <meta name="twitter:card" content="summary">
 
@@ -126,13 +126,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-count">4</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
   </nav>
@@ -195,9 +195,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
-      
 
-      <time title="Created: 2026-03-07 17:24:31 / Modified: 09:33:40" itemprop="dateCreated datePublished" datetime="2026-03-07T17:24:31+00:00">2026-03-07</time>
+      <time title="Created: 2026-03-07 17:24:31" itemprop="dateCreated datePublished" datetime="2026-03-07T17:24:31+00:00">2026-03-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2026-03-11 07:43:36" itemprop="dateModified" datetime="2026-03-11T07:43:36+00:00">2026-03-11</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -218,21 +224,24 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h2 id="概念概述"><a href="#概念概述" class="headerlink" title="概念概述"></a>概念概述</h2><ol>
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>Inspired by this <a target="_blank" rel="noopener" href="https://www.promptingguide.ai/techniques">site</a><br>Last updated at: 2026-03-07</p>
+</blockquote>
+<h2 id="概念概述"><a href="#概念概述" class="headerlink" title="概念概述"></a>概念概述</h2><ol>
 <li>Zero Shot 直接提问</li>
 <li>Few Shot 给出问答示例，然后提问</li>
 <li>Chain-of-Thought Prompting 思考链提示。ZeroShot-CoT 是添加一行 “Let’s think step by step”，FewShot-CoT 是在示例回答中添加思考步骤</li>
 <li>Auto CoT。阶段一，模型将数据集中的问题按语义进行分组，从每组中采样代表性问题，使用 ZeroShot-CoT 为挑选的问题生成推理路径。阶段二，从示例库中挑选问题作为 FewShot，可添加 ZeroShot-CoT</li>
 <li>Meta Prompting 元提示。结构化输入，引导结构化输出</li>
 <li>Self Consistency 自我一致性。多次输出，少数服从多数。用于提高结果准确度</li>
-<li>Generated Knowledge Prompting  先让模型生成知识，再回答问题。前提是假设模型内部已有相关知识</li>
+<li>Generated Knowledge Prompting 先让模型生成知识，再回答问题。前提是假设模型内部已有相关知识</li>
 <li>Prompt Chaining 提示链。拆解任务，将前面任务输出作为后面任务的 Prompt 的输入</li>
 <li>Tree of Thoughts 思考树。不同于 CoT，对于每一步输出都要求给出多个输出，选择正确输出并继续</li>
 <li>Retrieval Augmented Generation。向量检索相关内容并作为上下文传给模型</li>
 <li>Automatic Reasoning and Tool-use (ART)。类似于 Auto CoT，不同的是，它问题检索范围较为精确，而且强调工具调用能力</li>
 <li>Automatic Prompt Engineer (APE)。模型遵循生成-评估-迭代闭环来自主更新优化 Prompt。多发生在离线优化时，也可以在 pre-response 时优化用户输入，以及在 post-response 后验证输出并迭代</li>
 <li>Active-Prompt。让模型挑出最难或不确定的问题，由人类进行标注。用以提升复杂、垂直领域的准确率</li>
-<li>Directional Stimulus Prompting (DSP)。 先生成暗示（Hint&#x2F;Stimulus），再用这个暗示来引导模型生成最终结果。 </li>
+<li>Directional Stimulus Prompting (DSP)。 先生成暗示（Hint&#x2F;Stimulus），再用这个暗示来引导模型生成最终结果。</li>
 <li>PAL (Program-Aided Language Models)。类似于 CoT，但是解决步骤是以编程语言形式展示，在模型输出后，需要调用对应的运行时计算出结果</li>
 <li>ReAct Prompting。模型按思考-行动-观察循环逻辑工作，强调外部交互。为 ART 提供了逻辑框架</li>
 <li>Reflexion 反思。Actor 执行，Evaluator 打分或检测，有问题则交给 Self-Reflection 重新审视并在下轮优化</li>
@@ -256,6 +265,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2026/03/11/FontCharsetEncoding/" rel="next" title="Font, Charset & Encoding">
+                  Font, Charset & Encoding <i class="fa fa-angle-right"></i>
+                </a>
             </div>
           </div>
     </footer>
