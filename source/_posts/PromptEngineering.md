@@ -1,7 +1,9 @@
 ---
 title: Prompt Engineering
 date: 2026-03-07 17:24:31
-categories: Prompt, AI
+categories:
+    - Prompt
+    - AI
 ---
 
 > Inspired by this [site](https://www.promptingguide.ai/techniques)

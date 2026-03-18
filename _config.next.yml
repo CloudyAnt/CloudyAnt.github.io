@@ -24,3 +24,5 @@ scheme: Pisces
 
 # Dark Mode
 darkmode: true
+mermaid:
+  enable: true

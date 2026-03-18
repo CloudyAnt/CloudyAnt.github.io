@@ -1,7 +1,9 @@
 ---
 title: Hexo + GithubPages
 date: 2022-07-21 16:08:31
-categories: Hexo, Github
+categories:
+    - Hexo
+    - Github
 ---
 
 # 
