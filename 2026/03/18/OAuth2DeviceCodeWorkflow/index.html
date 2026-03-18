@@ -20,27 +20,27 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"cloudyant.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="For text shown on the internet (blogs, instant messages, etc.), have you ever wondered how it is displayed? It relates to three basic concepts, from frontend to backend: Font, Character set (charset),">
+    <meta name="description" content="技术规范OAuth2 的技术规范和本文用到的相关术语定义可参考 RFC 8628 通用授权时序图对于无法直接调用浏览器的程序，比如命令行，通常使用 Device Code 授权类型（Grant Type）。 sequenceDiagram     autonumber     participant c as 客户端（CLI&#x2F;设备）     actor u as 用户     participan">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Font, Charset &amp; Encoding">
-<meta property="og:url" content="https://cloudyant.github.io/2026/03/11/FontCharsetEncoding/index.html">
+<meta property="og:title" content="OAuth2 Device Code 授权工作流">
+<meta property="og:url" content="https://cloudyant.github.io/2026/03/18/OAuth2DeviceCodeWorkflow/index.html">
 <meta property="og:site_name" content="柴家琪的博客 | Blog of ChaiJiaqi">
-<meta property="og:description" content="For text shown on the internet (blogs, instant messages, etc.), have you ever wondered how it is displayed? It relates to three basic concepts, from frontend to backend: Font, Character set (charset),">
+<meta property="og:description" content="技术规范OAuth2 的技术规范和本文用到的相关术语定义可参考 RFC 8628 通用授权时序图对于无法直接调用浏览器的程序，比如命令行，通常使用 Device Code 授权类型（Grant Type）。 sequenceDiagram     autonumber     participant c as 客户端（CLI&#x2F;设备）     actor u as 用户     participan">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2026-03-11T13:05:00.000Z">
+<meta property="article:published_time" content="2026-03-18T15:39:00.000Z">
 <meta property="article:modified_time" content="2026-03-18T07:55:49.745Z">
 <meta property="article:author" content="柴家琪(CHAI Jiaqi)">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://cloudyant.github.io/2026/03/11/FontCharsetEncoding/">
+<link rel="canonical" href="https://cloudyant.github.io/2026/03/18/OAuth2DeviceCodeWorkflow/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://cloudyant.github.io/2026/03/11/FontCharsetEncoding/","path":"2026/03/11/FontCharsetEncoding/","title":"Font, Charset & Encoding"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://cloudyant.github.io/2026/03/18/OAuth2DeviceCodeWorkflow/","path":"2026/03/18/OAuth2DeviceCodeWorkflow/","title":"OAuth2 Device Code 授权工作流"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Font, Charset & Encoding | 柴家琪的博客 | Blog of ChaiJiaqi</title>
+<title>OAuth2 Device Code 授权工作流 | 柴家琪的博客 | Blog of ChaiJiaqi</title>
   
 
 
@@ -113,7 +113,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Font"><span class="nav-number">1.</span> <span class="nav-text">Font</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Character-set-charset"><span class="nav-number">2.</span> <span class="nav-text">Character set (charset)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Encoding"><span class="nav-number">3.</span> <span class="nav-text">Encoding</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E8%A7%84%E8%8C%83"><span class="nav-number">1.</span> <span class="nav-text">技术规范</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E7%94%A8%E6%8E%88%E6%9D%83%E6%97%B6%E5%BA%8F%E5%9B%BE"><span class="nav-number">2.</span> <span class="nav-text">通用授权时序图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E5%8F%82%E6%95%B0%E5%92%8C%E6%AD%A5%E9%AA%A4"><span class="nav-number">3.</span> <span class="nav-text">关键参数和步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AE%E8%AF%A2%E9%94%99%E8%AF%AF%E7%A0%81%E5%A4%84%E7%90%86%E5%BB%BA%E8%AE%AE"><span class="nav-number">4.</span> <span class="nav-text">轮询错误码处理建议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E4%B8%8E%E4%BD%93%E9%AA%8C%E5%BB%BA%E8%AE%AE"><span class="nav-number">5.</span> <span class="nav-text">安全与体验建议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Token-%E4%BF%9D%E5%AD%98%E5%92%8C%E6%9B%B4%E6%96%B0"><span class="nav-number">6.</span> <span class="nav-text">Token 保存和更新</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E6%8E%88%E6%9D%83%E7%9B%B8%E5%85%B3%E9%85%8D%E7%BD%AE"><span class="nav-number">7.</span> <span class="nav-text">获取授权相关配置</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -167,7 +167,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://cloudyant.github.io/2026/03/11/FontCharsetEncoding/">
+    <link itemprop="mainEntityOfPage" href="https://cloudyant.github.io/2026/03/18/OAuth2DeviceCodeWorkflow/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -180,12 +180,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Font, Charset & Encoding | 柴家琪的博客 | Blog of ChaiJiaqi">
+      <meta itemprop="name" content="OAuth2 Device Code 授权工作流 | 柴家琪的博客 | Blog of ChaiJiaqi">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Font, Charset & Encoding
+          OAuth2 Device Code 授权工作流
         </h1>
 
         <div class="post-meta-container">
@@ -195,15 +195,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
+      
 
-      <time title="Created: 2026-03-11 13:05:00" itemprop="dateCreated datePublished" datetime="2026-03-11T13:05:00+00:00">2026-03-11</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-03-18 07:55:49" itemprop="dateModified" datetime="2026-03-18T07:55:49+00:00">2026-03-18</time>
+      <time title="Created: 2026-03-18 15:39:00 / Modified: 07:55:49" itemprop="dateCreated datePublished" datetime="2026-03-18T15:39:00+00:00">2026-03-18</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -211,7 +205,7 @@
       </span>
       <span class="post-meta-item-text">In</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Encoding/" itemprop="url" rel="index"><span itemprop="name">Encoding</span></a>
+          <a href="/categories/OAuth2/" itemprop="url" rel="index"><span itemprop="name">OAuth2</span></a>
         </span>
     </span>
 
@@ -224,20 +218,58 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p>For text shown on the internet (blogs, instant messages, etc.), have you ever wondered how it is displayed?</p>
-<p>It relates to three basic concepts, from frontend to backend: <strong>Font</strong>, <strong>Character set (charset)</strong>, and <strong>Encoding</strong>.</p>
-<h2 id="Font"><a href="#Font" class="headerlink" title="Font"></a>Font</h2><p>On digital devices, text is ultimately rendered into images (a matrix of pixels). A <strong>font</strong> describes how characters are drawn.</p>
-<p>A font typically stores outlines as vector graphics (often Bézier curves), so glyphs can be drawn at many sizes and in different styles.</p>
-<p>Common font file types are <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/OpenType">OpenType (OTF)</a>, <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/TrueType">TrueType (TTF)</a>, and <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Web_Open_Font_Format">WOFF&#x2F;WOFF2</a>.</p>
-<h2 id="Character-set-charset"><a href="#Character-set-charset" class="headerlink" title="Character set (charset)"></a>Character set (charset)</h2><p>How does a program know which glyph in the font to draw?</p>
-<p>You need a mapping between <strong>characters</strong> and numbers. Take Unicode as an example, each character is assigned a <strong>code point</strong> (for example, <code>你</code> is <code>U+4F60</code>, and <code>A</code> is <code>U+0041</code>).</p>
-<p>Fonts don’t store “characters” directly; they store <strong>glyphs</strong> (shapes). A font’s <strong>cmap</strong> table maps <strong>code points → glyphs</strong>. Not every glyph necessarily has its own code point (for example, ligatures and stylistic alternates).</p>
-<p>A charset is not a physical thing; it’s a standard&#x2F;specification that everyone follows. The most widely used character set today is <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Unicode">Unicode</a>. Older&#x2F;legacy character sets include <em>ASCII</em> and many regional standards.</p>
-<h2 id="Encoding"><a href="#Encoding" class="headerlink" title="Encoding"></a>Encoding</h2><p>Computers store and transmit <strong>bytes</strong>, so we need an <strong>encoding</strong>: a rule for turning code points into bytes (and back). Without knowing the encoding, a byte sequence can’t be interpreted correctly.</p>
-<p>Some encodings are fixed-length (for example, <strong>UTF-32</strong> uses 4 bytes per code point). Others are variable-length: <strong>UTF-8</strong> uses 1–4 bytes, and <strong>UTF-16</strong> uses 2 or 4 bytes (surrogate pairs for code points above <code>U+FFFF</code>). Variable-length encodings are efficient for common text, especially when most characters are in the ASCII range.</p>
-<p>The most common encoding on the web is <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/UTF-8">UTF-8</a>, a Unicode-based variable-length encoding. For example, <code>你</code> (<code>U+4F60</code>) is encoded in UTF-8 as the bytes <code>E4 BD A0</code> (hex).</p>
-<hr>
-<p>This article demonstrates the three basic concepts behind text rendering. In real systems there are more steps, like shaping, layout&#x2F;positioning, and rasterization.</p>
+    <div class="post-body" itemprop="articleBody"><h2 id="技术规范"><a href="#技术规范" class="headerlink" title="技术规范"></a>技术规范</h2><p>OAuth2 的技术规范和本文用到的相关术语定义可参考 <a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc8628">RFC 8628</a></p>
+<h2 id="通用授权时序图"><a href="#通用授权时序图" class="headerlink" title="通用授权时序图"></a>通用授权时序图</h2><p>对于无法直接调用浏览器的程序，比如命令行，通常使用 <code>Device Code</code> 授权类型（Grant Type）。</p>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant c as 客户端（CLI/设备）
+    actor u as 用户
+    participant ua as 用户代理（浏览器）
+    participant a as 授权服务
+    participant b as 平台后端
+
+    c ->> a: 请求 device_code（client_id/scope）
+    a ->> c: 返回 device_code/user_code/verification_uri/expires_in/interval
+
+    c ->> u: 展示 verification_uri 与 user_code（或 verification_uri_complete）
+    u ->> ua: 在浏览器打开验证地址并登录
+    ua ->> a: 提交 user_code 并确认授权
+
+    loop 按 interval 轮询（直到成功/过期）
+        c ->> a: device_code 换 token（grant_type=device_code）
+        a -->> c: authorization_pending / slow_down / access_token
+    end
+
+    c -->> b: 携带 access_token 获取资源</pre>
+
+<p>可同时参考 <a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc8628#section-3">RFC 8628</a> 的流程说明。</p>
+<h2 id="关键参数和步骤"><a href="#关键参数和步骤" class="headerlink" title="关键参数和步骤"></a>关键参数和步骤</h2><ol>
+<li>客户端调用 device authorization endpoint，获取：<ul>
+<li><code>device_code</code>：设备端轮询 token 接口时使用</li>
+<li><code>user_code</code>：用户在浏览器输入的短码</li>
+<li><code>verification_uri</code>：用户需要访问的验证地址</li>
+<li><code>verification_uri_complete</code>：可直接完成验证的地址（如服务端提供）</li>
+<li><code>expires_in</code>：<code>device_code</code> 过期时间（秒）</li>
+<li><code>interval</code>：建议轮询间隔（秒）</li>
+</ul>
+</li>
+<li>用户在浏览器完成登录与授权确认</li>
+<li>客户端按 <code>interval</code> 轮询 token endpoint，直到拿到 <code>access_token</code> 或超时</li>
+</ol>
+<h2 id="轮询错误码处理建议"><a href="#轮询错误码处理建议" class="headerlink" title="轮询错误码处理建议"></a>轮询错误码处理建议</h2><ul>
+<li><code>authorization_pending</code>：用户尚未完成授权，继续按间隔轮询</li>
+<li><code>slow_down</code>：客户端轮询过快，增加轮询间隔后重试</li>
+<li><code>expired_token</code>：<code>device_code</code> 已过期，需重新发起设备授权流程</li>
+<li><code>access_denied</code>：用户拒绝授权，结束流程并提示用户重试或退出</li>
+</ul>
+<h2 id="安全与体验建议"><a href="#安全与体验建议" class="headerlink" title="安全与体验建议"></a>安全与体验建议</h2><ul>
+<li>不要在日志中记录完整的 <code>device_code</code>、<code>access_token</code>、<code>refresh_token</code></li>
+<li><code>user_code</code> 展示给用户时，建议分组显示（如 <code>WDJB-MJHT</code>）并给出过期倒计时</li>
+<li>若服务端返回 <code>verification_uri_complete</code>，优先展示，减少用户手动输入成本</li>
+<li>对于 CLI，可在轮询期间提供进度提示，并支持用户主动取消登录</li>
+</ul>
+<h2 id="Token-保存和更新"><a href="#Token-保存和更新" class="headerlink" title="Token 保存和更新"></a>Token 保存和更新</h2><p><code>Device Code</code> 获取 token 后的保存与刷新策略，与 <code>Authorization Code</code> 基本一致：可参考 <a href="/2026/03/18/OAuth2AuthCodeWorkflow/">OAuth2 Authorization Code 授权工作流</a> 中的 <code>Token 保存和更新</code> 章节。</p>
+<h2 id="获取授权相关配置"><a href="#获取授权相关配置" class="headerlink" title="获取授权相关配置"></a>获取授权相关配置</h2><p>如果服务支持 OIDC Discovery，可通过 <code>$baseUrl/.well-known/openid-configuration</code> 获取端点元数据（如 device authorization endpoint、token endpoint 等）；也可参考 OAuth 2.0 Authorization Server Metadata（RFC 8414）约定。更通用的配置获取建议可参考 <a href="/2026/03/18/OAuth2AuthCodeWorkflow/">OAuth2 Authorization Code 授权工作流</a> 中的 <code>获取授权相关配置</code> 章节。</p>
 
     </div>
 
@@ -251,14 +283,11 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2026/03/07/PromptEngineering/" rel="prev" title="Prompt Engineering">
-                  <i class="fa fa-angle-left"></i> Prompt Engineering
+                <a href="/2026/03/18/OAuth2AuthCodeWorkflow/" rel="prev" title="OAuth2 Authorization Code 授权工作流">
+                  <i class="fa fa-angle-left"></i> OAuth2 Authorization Code 授权工作流
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2026/03/18/OAuth2AuthCodeWorkflow/" rel="next" title="OAuth2 Authorization Code 授权工作流">
-                  OAuth2 Authorization Code 授权工作流 <i class="fa fa-angle-right"></i>
-                </a>
             </div>
           </div>
     </footer>

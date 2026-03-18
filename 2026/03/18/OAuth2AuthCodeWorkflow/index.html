@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"cloudyant.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="借鉴了这里  技术规范OAuth2 的技术规范和本文用到的相关术语定义可参考 RFC 6749，以及针对原生应用的 RFC 8252 通用授权时序图业界普遍使用 Authorization Code 授权类型（Grant Type）。不同客户端的登录流程大致是一致的： sequenceDiagram     autonumber     participant c as 客户端     acto">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OAuth2 Authorization Code 授权工作流">
+<meta property="og:url" content="https://cloudyant.github.io/2026/03/18/OAuth2AuthCodeWorkflow/index.html">
+<meta property="og:site_name" content="柴家琪的博客 | Blog of ChaiJiaqi">
+<meta property="og:description" content="借鉴了这里  技术规范OAuth2 的技术规范和本文用到的相关术语定义可参考 RFC 6749，以及针对原生应用的 RFC 8252 通用授权时序图业界普遍使用 Authorization Code 授权类型（Grant Type）。不同客户端的登录流程大致是一致的： sequenceDiagram     autonumber     participant c as 客户端     acto">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-03-18T14:49:00.000Z">
+<meta property="article:modified_time" content="2026-03-18T07:55:49.745Z">
+<meta property="article:author" content="柴家琪(CHAI Jiaqi)">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://cloudyant.github.io/2026/03/18/OAuth2AuthCodeWorkflow/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://cloudyant.github.io/2026/03/18/OAuth2AuthCodeWorkflow/","path":"2026/03/18/OAuth2AuthCodeWorkflow/","title":"OAuth2 Authorization Code 授权工作流"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>OAuth2 Authorization Code 授权工作流 | 柴家琪的博客 | Blog of ChaiJiaqi</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">柴家琪的博客 | Blog of ChaiJiaqi</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">远方 依然泛着微光</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E8%A7%84%E8%8C%83"><span class="nav-number">1.</span> <span class="nav-text">技术规范</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E7%94%A8%E6%8E%88%E6%9D%83%E6%97%B6%E5%BA%8F%E5%9B%BE"><span class="nav-number">2.</span> <span class="nav-text">通用授权时序图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%8E%88%E6%9D%83%E6%B5%81%E7%A8%8B%E5%B7%AE%E5%BC%82"><span class="nav-number">3.</span> <span class="nav-text">客户端授权流程差异</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%88%E6%9D%83%E6%B5%81%E7%A8%8B%E5%B7%AE%E5%BC%82"><span class="nav-number">3.1.</span> <span class="nav-text">授权流程差异</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E5%9B%9E%E5%9C%B0%E5%9D%80%E9%87%8D%E5%AE%9A%E5%90%91%E5%9B%9E%E8%B0%83%E6%B5%81%E7%A8%8B"><span class="nav-number">3.2.</span> <span class="nav-text">环回地址重定向回调流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E9%A1%B5%E9%87%8D%E5%AE%9A%E5%90%91%E5%9B%9E%E8%B0%83%E6%B5%81%E7%A8%8B"><span class="nav-number">3.3.</span> <span class="nav-text">中间页重定向回调流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PKCE"><span class="nav-number">4.</span> <span class="nav-text">PKCE</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Token-%E4%BF%9D%E5%AD%98%E5%92%8C%E6%9B%B4%E6%96%B0"><span class="nav-number">5.</span> <span class="nav-text">Token 保存和更新</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#State"><span class="nav-number">6.</span> <span class="nav-text">State</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E6%8E%88%E6%9D%83%E7%9B%B8%E5%85%B3%E9%85%8D%E7%BD%AE"><span class="nav-number">7.</span> <span class="nav-text">获取授权相关配置</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">柴家琪(CHAI Jiaqi)</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/CloudyAnt" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;CloudyAnt" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/iiim.cloudy@gmail.com" title="E-Mail → iiim.cloudy@gmail.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://cloudyant.github.io/2026/03/18/OAuth2AuthCodeWorkflow/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="柴家琪(CHAI Jiaqi)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="柴家琪的博客 | Blog of ChaiJiaqi">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="OAuth2 Authorization Code 授权工作流 | 柴家琪的博客 | Blog of ChaiJiaqi">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          OAuth2 Authorization Code 授权工作流
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2026-03-18 14:49:00 / Modified: 07:55:49" itemprop="dateCreated datePublished" datetime="2026-03-18T14:49:00+00:00">2026-03-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/OAuth2/" itemprop="url" rel="index"><span itemprop="name">OAuth2</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>借鉴了<a target="_blank" rel="noopener" href="https://www.digitalocean.com/community/tutorials/an-introduction-to-oauth-2">这里</a></p>
+</blockquote>
+<h2 id="技术规范"><a href="#技术规范" class="headerlink" title="技术规范"></a>技术规范</h2><p>OAuth2 的技术规范和本文用到的相关术语定义可参考 <a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc6749">RFC 6749</a>，以及针对原生应用的 <a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc8252">RFC 8252</a></p>
+<h2 id="通用授权时序图"><a href="#通用授权时序图" class="headerlink" title="通用授权时序图"></a>通用授权时序图</h2><p>业界普遍使用 <code>Authorization Code</code> 授权类型（Grant Type）。不同客户端的登录流程大致是一致的：</p>
+<pre class="mermaid">sequenceDiagram
+    autonumber
+    participant c as 客户端
+    actor u as 用户
+    participant ua as 用户代理（浏览器）
+    participant a as 授权服务
+    participant b as 平台后端
+    
+    c ->> ua: 进入浏览器
+    ua ->> a: 发起授权请求
+    a ->> ua: 重定向到登录页
+
+    u ->> ua: 用户输入账号密码并登录
+    ua ->> a: 发送登录信息
+
+    critical 重定向地址不同导致不同客户端接收 code 的方式不同
+    a ->> c: 携 code 重定向到 redirect_uri，客户端接收
+    end
+    
+    c ->> a: code 换 access_token
+    a ->> c: access_token
+
+    c -->> b: 携带 access_token 获取资源</pre>
+
+<p>可同时参考 <a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc6749#section-4.1">RFC 6749</a> 的流程图</p>
+<blockquote>
+<p>有些应用在发送登录信息后，还会进入授权页，让用户确认具体需要授权哪些 scope。如暂时不需要细分 scope，可配置取消此门槛</p>
+</blockquote>
+<h2 id="客户端授权流程差异"><a href="#客户端授权流程差异" class="headerlink" title="客户端授权流程差异"></a>客户端授权流程差异</h2><p><code>Authorization Code</code> 授权类型要求必须通过浏览器进行授权。对于 Web 客户端，使用浏览器重定向即可实现以上流程。而对于非页面项目，就需要在登录时打开浏览器，并等待回调。切换应用导致了客户端授权流程的差异，即上图中标为 <code>critical</code> 的部分。</p>
+<h3 id="授权流程差异"><a href="#授权流程差异" class="headerlink" title="授权流程差异"></a>授权流程差异</h3><p>授权流程基本和通用授权时序图一致，<code>客户端</code> 和 <code>用户代理</code> 其实都是浏览器，只是在不同的地址</p>
+<h3 id="环回地址重定向回调流程"><a href="#环回地址重定向回调流程" class="headerlink" title="环回地址重定向回调流程"></a>环回地址重定向回调流程</h3><p>一般授权服务会支持环回地址重定向。使用环回地址回调时，客户端会监听本地回调地址，比如 <em><a target="_blank" rel="noopener" href="http://127.0.0.1:65143/auth/callback">http://127.0.0.1:65143/auth/callback</a></em>（端口通常由客户端动态分配并在发起授权时带上）。对应地，授权服务需要允许 <em><a href="http://127.0.0.1:{port}/auth/callback">http://127.0.0.1:{port}/auth/callback</a></em> 这类回调地址模式。</p>
+<blockquote>
+<p>如果你在开发 JetBrains IDE 插件，可以使用其内置的服务器（常见端口是 <code>63342</code>）</p>
+</blockquote>
+<p>授权回调部分流程是：</p>
+ <pre class="mermaid"> sequenceDiagram
+    autonumber
+    participant c as Jetbrains 插件
+    participant ua as 用户代理（浏览器）
+    participant a as 授权服务
+
+    a ->> ua: 302 重定向到环回回调地址（携带 code/state）
+    ua ->> c: 访问本地回调地址
+    c ->> ua: 返回登录成功/失败页（或再 302 到展示页）</pre>
+
+<p>环回回调地址类似于：GET <code>http://127.0.0.1:65143/auth/callback?code=...&amp;state=...</code></p>
+<p>环回地址重定向是 <a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc8252#section-7.3">RFC 8252</a> 推荐的一种桌面应用接收 OAuth 回调的方式</p>
+<p>使用环回地址的好处是：客户端可直接、稳定地收到 code；同时客户端可向服务端上报登录结果用于观测与审计</p>
+<h3 id="中间页重定向回调流程"><a href="#中间页重定向回调流程" class="headerlink" title="中间页重定向回调流程"></a>中间页重定向回调流程</h3><p>有些程序会在系统中注册自定义协议。以 VSCode 为例，使用浏览器访问 <code>vscode://...</code> ，浏览器会弹框提示打开对应的应用。利用这一技术可以实现更流畅的 OAuth2 桌面应用的登录</p>
+<p>但是直接使用会带来一个体验问题。浏览器跳转到自定义协议后会切到客户端，浏览器页签可能停留在空白页、提示页或中断态。为避免此问题，我们使用<code>中间页</code>方案：回调时先跳转到中间页，再由中间页访问自定义协议打开客户端，并在浏览器展示明确的成功&#x2F;失败提示</p>
+<p>因此，中间页重定向回调流程是：</p>
+ <pre class="mermaid"> sequenceDiagram
+    autonumber
+    participant c as 客户端
+    participant ua as 用户代理（浏览器）
+    participant a as 授权服务
+
+    a ->> ua: 重定向到中间页
+    ua ->> c: 访问自定义协议打开客户端</pre>
+
+<p>自定义协议也是 <a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc8252#section-7.1">RFC 8252</a> 推荐的一种桌面应用接收 OAuth 回调的方式</p>
+<h2 id="PKCE"><a href="#PKCE" class="headerlink" title="PKCE"></a>PKCE</h2><p>虽然各个客户端被注册成使用 BASIC 认证，但实际上管理平台、插件等都属于公开客户端。在进行获取 access_token 时，全程都在用户可感知的客户端进行，所以用户或黑客程序有能力轻松地获取到 Header 中的客户端 id 和密钥信息。所以，为了保证授权流程的安全，以上客户端必须使用 PKCE 技术</p>
+<p>PKCE（Proof Key of Code Exchange）工作流程如下：</p>
+<ol>
+<li>生成 PKCE 相关参数<ul>
+<li>生成一个高熵的随机字符串作为 <code>code_verifier</code></li>
+<li>选择一个 hash 算法，一般是 SHA-256</li>
+<li>通过 <code>BASE64URL-ENCODE(SHA256(ASCII(code_verifier)))</code> 获取 <code>code_challenge</code>（无 <code>=</code> padding）</li>
+</ul>
+</li>
+<li>发起请求授权时携带 <code>code_challenge</code> 和 <code>code_challenge_method</code>。如果 hash 算法是 SHA-256，则 <code>code_challenge_method</code> 是 <code>S256</code></li>
+<li>在使用 code 换取 access_token 时携带 <code>code_verifier</code>。授权服务将结合两步接收的 PKCE 相关参数进行校验</li>
+</ol>
+<h2 id="Token-保存和更新"><a href="#Token-保存和更新" class="headerlink" title="Token 保存和更新"></a>Token 保存和更新</h2><p>Web 客户端可以使用加密的 HTTP Cookie（iron-session）保存 token。桌面客户端可以使用系统<code>钥匙串</code>保存 token。</p>
+<p>更新 token 需要用到 <code>grant_type=refresh_token</code> 刷新流程，携带 <em>code 换 access_token</em> 时返回的 <code>refresh_token</code> 调用 token 接口即可</p>
+<h2 id="State"><a href="#State" class="headerlink" title="State"></a>State</h2><p>state 参数是防止 CSRF 攻击 的重要机制：客户端生成随机 state 并保存，发起授权时携带此参数，回调时客户端需验证 state 是否匹配</p>
+<h2 id="获取授权相关配置"><a href="#获取授权相关配置" class="headerlink" title="获取授权相关配置"></a>获取授权相关配置</h2><p>授权流程涉及到多个 URL 的调用，可能还需知道授权服务支持的授权类型、PKCE 支持的算法等。若服务提供 OIDC Discovery，可通过 <code>$baseUrl/.well-known/openid-configuration</code> 获取元数据；若非 OIDC，也可参考 OAuth 2.0 Authorization Server Metadata（RFC 8414）端点约定。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/03/11/FontCharsetEncoding/" rel="prev" title="Font, Charset & Encoding">
+                  <i class="fa fa-angle-left"></i> Font, Charset & Encoding
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/03/18/OAuth2DeviceCodeWorkflow/" rel="next" title="OAuth2 Device Code 授权工作流">
+                  OAuth2 Device Code 授权工作流 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">柴家琪(CHAI Jiaqi)</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.5.0/mermaid.min.js","integrity":"sha256-K7oJiQlDulzl24ZUFOywuYme1JqBBvQzK6m8qHjt9Gk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
