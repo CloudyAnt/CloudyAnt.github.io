@@ -1,8 +1,8 @@
 ---
-title:  🚧 施工中 | Constructing...
+title:  👋 欢迎访问 | Welcome
 date: 2022-07-20 16:08:31
 categories: Hello
 top: true
 ---
 
-## 此站点正在施工中。查看[关于](/about)页面查看更多信息。| This site is under construction. Check out the [About](/about) page for more info.
+## 欢迎访问此站点！你可以先查看[关于](/about)页面了解更多。| Welcome to this site! You can start by checking the [About](/about) page to learn more.

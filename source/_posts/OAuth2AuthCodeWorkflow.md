@@ -55,9 +55,9 @@ sequenceDiagram
 
 ### 环回地址重定向回调流程
 
-一般授权服务会支持环回地址重定向。使用环回地址回调，客户端需要提供环回回调地址，比如 *127.0.0.1:65543/auth/callbackb*。对应地服务端需要指定回调地址为 *127.0.0.1/auth/callback*
+一般授权服务会支持环回地址重定向。使用环回地址回调时，客户端会监听本地回调地址，比如 *http://127.0.0.1:65143/auth/callback*（端口通常由客户端动态分配并在发起授权时带上）。对应地，授权服务需要允许 *http://127.0.0.1:{port}/auth/callback* 这类回调地址模式。
 
-> 如果你在开发 Jetbrains IDE 插件，可以使用其内置的服务器（一般是 65543 端口）
+> 如果你在开发 JetBrains IDE 插件，可以使用其内置的服务器（常见端口是 `63342`）
 
 授权回调部分流程是：
 
@@ -68,23 +68,23 @@ sequenceDiagram
     participant ua as 用户代理（浏览器）
     participant a as 授权服务
 
-    a ->> c: 访问环回回调地址
-    c ->> a: 返回 302 响应重定向到指定页
-    a ->> ua: 重定向到登录成功/失败页
+    a ->> ua: 302 重定向到环回回调地址（携带 code/state）
+    ua ->> c: 访问本地回调地址
+    c ->> ua: 返回登录成功/失败页（或再 302 到展示页）
 
  ```
 
-环回回调地址类似于：GET 127.0.0.1:65543/auth/callback?code=...&state=...
+环回回调地址类似于：GET `http://127.0.0.1:65143/auth/callback?code=...&state=...`
 
 环回地址重定向是 [RFC 8252](https://datatracker.ietf.org/doc/html/rfc8252#section-7.3) 推荐的一种桌面应用接收 OAuth 回调的方式
 
-使用环回地址的好处是，授权服务可以了解和记录到实际的登录结果
+使用环回地址的好处是：客户端可直接、稳定地收到 code；同时客户端可向服务端上报登录结果用于观测与审计
 
 ### 中间页重定向回调流程
 
 有些程序会在系统中注册自定义协议。以 VSCode 为例，使用浏览器访问 `vscode://...` ，浏览器会弹框提示打开对应的应用。利用这一技术可以实现更流畅的 OAuth2 桌面应用的登录
 
-但是直接使用会带来一个问题。虽然使用自定义协议打开客户端可以接收到授权码并进行后续流程，但因为应用切换，授权服务发送的回调 http 请求将无法接收到响应，导致浏览器一直停留在登录页。为避免此问题，我们使用了`中间页`方案，即回调时先跳转到中间页，再由中间页访问自定义协议打开客户端
+但是直接使用会带来一个体验问题。浏览器跳转到自定义协议后会切到客户端，浏览器页签可能停留在空白页、提示页或中断态。为避免此问题，我们使用`中间页`方案：回调时先跳转到中间页，再由中间页访问自定义协议打开客户端，并在浏览器展示明确的成功/失败提示
 
 因此，中间页重定向回调流程是：
 
@@ -111,15 +111,15 @@ PKCE（Proof Key of Code Exchange）工作流程如下：
 1. 生成 PKCE 相关参数
     - 生成一个高熵的随机字符串作为 `code_verifier`
     - 选择一个 hash 算法，一般是 SHA-256
-    - 通过 `urlEncode(hash(code_verifier))` 获取 `code_challenge`
+    - 通过 `BASE64URL-ENCODE(SHA256(ASCII(code_verifier)))` 获取 `code_challenge`（无 `=` padding）
 2. 发起请求授权时携带 `code_challenge` 和 `code_challenge_method`。如果 hash 算法是 SHA-256，则 `code_challenge_method` 是 `S256`
-3. 在使用 code 换取 access_token 时携带 `code_verifier`。授权服务此将结合两步接收的 PKCE 相关参数进行校验
+3. 在使用 code 换取 access_token 时携带 `code_verifier`。授权服务将结合两步接收的 PKCE 相关参数进行校验
 
 ## Token 保存和更新
 
 Web 客户端可以使用加密的 HTTP Cookie（iron-session）保存 token。桌面客户端可以使用系统`钥匙串`保存 token。
 
-更新 token 需要用到 `Refresh Token` 授权类型，携带 *code 换 access_token* 时返回的 `refresh_token` 访问获取 token 接口即可
+更新 token 需要用到 `grant_type=refresh_token` 刷新流程，携带 *code 换 access_token* 时返回的 `refresh_token` 调用 token 接口即可
 
 ## State
 
@@ -127,5 +127,5 @@ state 参数是防止 CSRF 攻击 的重要机制：客户端生成随机 state 
 
 ## 获取授权相关配置
 
-授权流程涉及到多个 url 的调用，可能还需知道授权服务支持的授权类型，PKCE 支持的 hash 算法等。而实际我们只需知道基础路径，相关内容都可通过 `$baseUrl/.well-known/openid-configuration` 接口获取到
+授权流程涉及到多个 URL 的调用，可能还需知道授权服务支持的授权类型、PKCE 支持的算法等。若服务提供 OIDC Discovery，可通过 `$baseUrl/.well-known/openid-configuration` 获取元数据；若非 OIDC，也可参考 OAuth 2.0 Authorization Server Metadata（RFC 8414）端点约定。
 
