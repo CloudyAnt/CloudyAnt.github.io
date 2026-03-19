@@ -12,7 +12,7 @@ type: "about"
 
 ## [Github](https://github.com/CloudyAnt)
 
-## [Gitee](https://github.com/CloudyAnt)
+## [Gitee](https://gitee.com/itscloudy)
 
 ---
 
