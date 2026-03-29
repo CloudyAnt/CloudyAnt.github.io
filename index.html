@@ -121,7 +121,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-count">7</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -129,6 +129,11 @@
           <a href="/categories/">
         <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
 </div>
@@ -197,7 +202,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-03-19 09:26:02" itemprop="dateModified" datetime="2026-03-19T09:26:02+00:00">2026-03-19</time>
+      <time title="Modified: 2026-03-29 09:16:02" itemprop="dateModified" datetime="2026-03-29T09:16:02+00:00">2026-03-29</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -220,6 +225,86 @@
     
     <div class="post-body" itemprop="articleBody">
           <h2 id="欢迎访问此站点！你可以先查看关于页面了解更多。-Welcome-to-this-site-You-can-start-by-checking-the-About-page-to-learn-more"><a href="#欢迎访问此站点！你可以先查看关于页面了解更多。-Welcome-to-this-site-You-can-start-by-checking-the-About-page-to-learn-more" class="headerlink" title="欢迎访问此站点！你可以先查看关于页面了解更多。| Welcome to this site! You can start by checking the About page to learn more."></a>欢迎访问此站点！你可以先查看<a href="/about">关于</a>页面了解更多。| Welcome to this site! You can start by checking the <a href="/about">About</a> page to learn more.</h2>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://cloudyant.github.io/2026/03/29/OpenClaw-Tricks/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="柴家琪(CHAI Jiaqi)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="柴家琪的博客 | Blog of ChaiJiaqi">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | 柴家琪的博客 | Blog of ChaiJiaqi">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/03/29/OpenClaw-Tricks/" class="post-title-link" itemprop="url">OpenClaw Tricks</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2026-03-29 17:15:35 / Modified: 09:16:02" itemprop="dateCreated datePublished" datetime="2026-03-29T17:15:35+00:00">2026-03-29</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>For basic knowledges and usages about openclaw just check its <a target="_blank" rel="noopener" href="https://github.com/openclaw/openclaw">github page</a></p>
+<h2 id="Empowerment"><a href="#Empowerment" class="headerlink" title="Empowerment"></a>Empowerment</h2><p>To make it really open ‘claw’, it’s necessary to grant it the access to <code>exec</code> command, otherwise it’s just a ‘chatter’.<br>To do so, edit the <code>openclaw.json</code>:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;tools&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">   <span class="attr">&quot;profile&quot;</span><span class="punctuation">:</span> <span class="string">&quot;full&quot;</span><span class="punctuation">,</span></span><br><span class="line">   <span class="attr">&quot;allow&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;*&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">   <span class="attr">&quot;exec&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">     <span class="attr">&quot;host&quot;</span><span class="punctuation">:</span> <span class="string">&quot;gateway&quot;</span><span class="punctuation">,</span></span><br><span class="line">     <span class="attr">&quot;security&quot;</span><span class="punctuation">:</span> <span class="string">&quot;full&quot;</span><span class="punctuation">,</span></span><br><span class="line">     <span class="attr">&quot;ask&quot;</span><span class="punctuation">:</span> <span class="string">&quot;off&quot;</span></span><br><span class="line">   <span class="punctuation">&#125;</span></span><br><span class="line"> <span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Skills"><a href="#Skills" class="headerlink" title="Skills"></a>Skills</h2><p>Skills can be found at <a target="_blank" rel="noopener" href="https://clawhub.ai/">clawhub</a>, <a target="_blank" rel="noopener" href="https://skills.sh/">skills.sh</a>, etc. They have guides about how to install.</p>
+<h2 id="Model-Config"><a href="#Model-Config" class="headerlink" title="Model Config"></a>Model Config</h2><p>You can edit the <code>openclaw.json</code> directly to add models, but it’s more suggested to use the <code>openclaw onboard</code> command instead, even though it feels a litter semantically incorrect.</p>
+<h2 id="Channel-Config"><a href="#Channel-Config" class="headerlink" title="Channel Config"></a>Channel Config</h2><p>Add any social media channel will give you the ability to dictate that lobster remotely.</p>
+<p><strong>QQ Bot</strong></p>
+<p>Get an <code>app id</code> and <code>app secret</code> first at <a target="_blank" rel="noopener" href="https://q.qq.com/qqbot/openclaw/index.html">here</a>, then:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Install the plugin</span></span><br><span class="line">openclaw plugins install @tencent-connect/openclaw-qqbot@latest</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Bind the robot</span></span><br><span class="line">openclaw channels add --channel qqbot --token &quot;$appId:$appSecret&quot;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Restart service</span></span><br><span class="line">openclaw gateway restart</span><br></pre></td></tr></table></figure>
+
+
       
     </div>
 
@@ -281,7 +366,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-03-19 09:26:02" itemprop="dateModified" datetime="2026-03-19T09:26:02+00:00">2026-03-19</time>
+      <time title="Modified: 2026-03-29 09:16:02" itemprop="dateModified" datetime="2026-03-29T09:16:02+00:00">2026-03-29</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -417,7 +502,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-03-19 09:26:02" itemprop="dateModified" datetime="2026-03-19T09:26:02+00:00">2026-03-19</time>
+      <time title="Modified: 2026-03-29 09:16:02" itemprop="dateModified" datetime="2026-03-29T09:16:02+00:00">2026-03-29</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -583,7 +668,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-03-19 09:26:02" itemprop="dateModified" datetime="2026-03-19T09:26:02+00:00">2026-03-19</time>
+      <time title="Modified: 2026-03-29 09:16:02" itemprop="dateModified" datetime="2026-03-29T09:16:02+00:00">2026-03-29</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -681,7 +766,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-03-19 09:26:02" itemprop="dateModified" datetime="2026-03-19T09:26:02+00:00">2026-03-19</time>
+      <time title="Modified: 2026-03-29 09:16:02" itemprop="dateModified" datetime="2026-03-29T09:16:02+00:00">2026-03-29</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -792,7 +877,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-03-19 09:26:02" itemprop="dateModified" datetime="2026-03-19T09:26:02+00:00">2026-03-19</time>
+      <time title="Modified: 2026-03-29 09:16:02" itemprop="dateModified" datetime="2026-03-29T09:16:02+00:00">2026-03-29</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
