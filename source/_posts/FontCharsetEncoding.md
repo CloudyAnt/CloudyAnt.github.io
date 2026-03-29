@@ -1,7 +1,14 @@
 ---
 title: Font, Charset & Encoding
 date: 2026-03-11 13:05:00
-categories: Encoding
+categories:
+  - Web
+  - Text & Encoding
+tags:
+  - Unicode
+  - Font
+  - Encoding
+  - Charset
 ---
 
 For text shown on the internet (blogs, instant messages, etc.), have you ever wondered how it is displayed?

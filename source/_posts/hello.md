@@ -1,7 +1,10 @@
 ---
 title:  👋 欢迎访问 | Welcome
 date: 2022-07-20 16:08:31
-categories: Hello
+categories: Meta
+tags:
+  - Site
+  - Welcome
 top: true
 ---
 

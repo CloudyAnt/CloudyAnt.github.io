@@ -1,7 +1,14 @@
 ---
 title: OAuth2 Device Code 授权工作流
 date: 2026-03-18 15:39:00
-categories: OAuth2
+categories:
+  - OAuth2
+  - Device Code
+tags:
+  - OAuth2
+  - Device Code
+  - CLI
+  - Security
 ---
 
 ## 技术规范

@@ -1,9 +1,14 @@
 ---
 title: OpenClaw Tricks
+date: 2026-03-29 17:15:35
+categories:
+  - AI
+  - OpenClaw
 tags:
   - OpenClaw
   - AI
-date: 2026-03-29 17:15:35
+  - Agent
+  - Tools
 ---
 
 

@@ -1,7 +1,13 @@
 ---
 title: OAuth2 Authorization Code 授权工作流
 date: 2026-03-18 14:49:00
-categories: OAuth2
+categories:
+  - OAuth2
+  - Authorization Code
+tags:
+  - OAuth2
+  - Authorization Code
+  - Security
 ---
 
 > 借鉴了[这里](https://www.digitalocean.com/community/tutorials/an-introduction-to-oauth-2)
