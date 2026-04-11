@@ -28,7 +28,7 @@
 <meta property="og:description" content="借鉴了这里  技术规范OAuth2 的技术规范和本文用到的相关术语定义可参考 RFC 6749，以及针对原生应用的 RFC 8252 通用授权时序图业界普遍使用 Authorization Code 授权类型（Grant Type）。不同客户端的登录流程大致是一致的： sequenceDiagram     autonumber     participant c as 客户端     acto">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2026-03-18T14:49:00.000Z">
-<meta property="article:modified_time" content="2026-04-01T15:05:57.102Z">
+<meta property="article:modified_time" content="2026-04-11T13:46:37.227Z">
 <meta property="article:author" content="柴家琪(CHAI Jiaqi)">
 <meta property="article:tag" content="OAuth2">
 <meta property="article:tag" content="Authorization Code">
@@ -211,7 +211,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-04-01 15:05:57" itemprop="dateModified" datetime="2026-04-01T15:05:57+00:00">2026-04-01</time>
+      <time title="Modified: 2026-04-11 13:46:37" itemprop="dateModified" datetime="2026-04-11T13:46:37+00:00">2026-04-11</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -240,7 +240,7 @@
 <p>借鉴了<a target="_blank" rel="noopener" href="https://www.digitalocean.com/community/tutorials/an-introduction-to-oauth-2">这里</a></p>
 </blockquote>
 <h2 id="技术规范"><a href="#技术规范" class="headerlink" title="技术规范"></a>技术规范</h2><p>OAuth2 的技术规范和本文用到的相关术语定义可参考 <a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc6749">RFC 6749</a>，以及针对原生应用的 <a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc8252">RFC 8252</a></p>
-<h2 id="通用授权时序图"><a href="#通用授权时序图" class="headerlink" title="通用授权时序图"></a>通用授权时序图</h2><p>业界普遍使用 <code>Authorization Code</code> 授权类型（Grant Type）。不同客户端的登录流程大致是一致的：</p>
+<h2 id="通用授权时序图"><a href="#通用授权时序图" class="headerlink" title="通用授权时序图"></a>通用授权时序图</h2><p>业界普遍使用 <strong>Authorization Code</strong> 授权类型（Grant Type）。不同客户端的登录流程大致是一致的：</p>
 <pre class="mermaid">sequenceDiagram
     autonumber
     participant c as 客户端
@@ -269,11 +269,11 @@
 <blockquote>
 <p>有些应用在发送登录信息后，还会进入授权页，让用户确认具体需要授权哪些 scope。如暂时不需要细分 scope，可配置取消此门槛</p>
 </blockquote>
-<h2 id="客户端授权流程差异"><a href="#客户端授权流程差异" class="headerlink" title="客户端授权流程差异"></a>客户端授权流程差异</h2><p><code>Authorization Code</code> 授权类型要求必须通过浏览器进行授权。对于 Web 客户端，使用浏览器重定向即可实现以上流程。而对于非页面项目，就需要在登录时打开浏览器，并等待回调。切换应用导致了客户端授权流程的差异，即上图中标为 <code>critical</code> 的部分。</p>
-<h3 id="授权流程差异"><a href="#授权流程差异" class="headerlink" title="授权流程差异"></a>授权流程差异</h3><p>授权流程基本和通用授权时序图一致，<code>客户端</code> 和 <code>用户代理</code> 其实都是浏览器，只是在不同的地址</p>
+<h2 id="客户端授权流程差异"><a href="#客户端授权流程差异" class="headerlink" title="客户端授权流程差异"></a>客户端授权流程差异</h2><p><strong>Authorization Code</strong> 授权类型要求必须通过浏览器进行授权。对于 Web 客户端，使用浏览器重定向即可实现以上流程。而对于非页面项目，就需要在登录时打开浏览器，并等待回调。切换应用导致了客户端授权流程的差异，即上图中标为 <strong>critical</strong> 的部分。</p>
+<h3 id="授权流程差异"><a href="#授权流程差异" class="headerlink" title="授权流程差异"></a>授权流程差异</h3><p>授权流程基本和通用授权时序图一致，<strong>客户端</strong> 和 <strong>用户代理</strong> 其实都是浏览器，只是在不同的地址</p>
 <h3 id="环回地址重定向回调流程"><a href="#环回地址重定向回调流程" class="headerlink" title="环回地址重定向回调流程"></a>环回地址重定向回调流程</h3><p>一般授权服务会支持环回地址重定向。使用环回地址回调时，客户端会监听本地回调地址，比如 <em><a target="_blank" rel="noopener" href="http://127.0.0.1:65143/auth/callback">http://127.0.0.1:65143/auth/callback</a></em>（端口通常由客户端动态分配并在发起授权时带上）。对应地，授权服务需要允许 <em><a href="http://127.0.0.1:{port}/auth/callback">http://127.0.0.1:{port}/auth/callback</a></em> 这类回调地址模式。</p>
 <blockquote>
-<p>如果你在开发 JetBrains IDE 插件，可以使用其内置的服务器（常见端口是 <code>63342</code>）</p>
+<p>如果你在开发 JetBrains IDE 插件，可以使用其内置的服务器（常见端口是 63342）</p>
 </blockquote>
 <p>授权回调部分流程是：</p>
  <pre class="mermaid"> sequenceDiagram
@@ -290,7 +290,7 @@
 <p>环回地址重定向是 <a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc8252#section-7.3">RFC 8252</a> 推荐的一种桌面应用接收 OAuth 回调的方式</p>
 <p>使用环回地址的好处是：客户端可直接、稳定地收到 code；同时客户端可向服务端上报登录结果用于观测与审计</p>
 <h3 id="中间页重定向回调流程"><a href="#中间页重定向回调流程" class="headerlink" title="中间页重定向回调流程"></a>中间页重定向回调流程</h3><p>有些程序会在系统中注册自定义协议。以 VSCode 为例，使用浏览器访问 <code>vscode://...</code> ，浏览器会弹框提示打开对应的应用。利用这一技术可以实现更流畅的 OAuth2 桌面应用的登录</p>
-<p>但是直接使用会带来一个体验问题。浏览器跳转到自定义协议后会切到客户端，浏览器页签可能停留在空白页、提示页或中断态。为避免此问题，我们使用<code>中间页</code>方案：回调时先跳转到中间页，再由中间页访问自定义协议打开客户端，并在浏览器展示明确的成功&#x2F;失败提示</p>
+<p>但是直接使用会带来一个体验问题。浏览器跳转到自定义协议后会切到客户端，浏览器页签可能停留在空白页、提示页或中断态。为避免此问题，我们使用<strong>中间页</strong>方案：回调时先跳转到中间页，再由中间页访问自定义协议打开客户端，并在浏览器展示明确的成功&#x2F;失败提示</p>
 <p>因此，中间页重定向回调流程是：</p>
  <pre class="mermaid"> sequenceDiagram
     autonumber
@@ -306,16 +306,16 @@
 <p>PKCE（Proof Key of Code Exchange）工作流程如下：</p>
 <ol>
 <li>生成 PKCE 相关参数<ul>
-<li>生成一个高熵的随机字符串作为 <code>code_verifier</code></li>
+<li>生成一个高熵的随机字符串作为 <strong>code_verifier</strong></li>
 <li>选择一个 hash 算法，一般是 SHA-256</li>
-<li>通过 <code>BASE64URL-ENCODE(SHA256(ASCII(code_verifier)))</code> 获取 <code>code_challenge</code>（无 <code>=</code> padding）</li>
+<li>通过 <code>BASE64URL-ENCODE(SHA256(ASCII(code_verifier)))</code> 获取 <strong>code_challenge</strong>（无 &#x3D; padding）</li>
 </ul>
 </li>
-<li>发起请求授权时携带 <code>code_challenge</code> 和 <code>code_challenge_method</code>。如果 hash 算法是 SHA-256，则 <code>code_challenge_method</code> 是 <code>S256</code></li>
-<li>在使用 code 换取 access_token 时携带 <code>code_verifier</code>。授权服务将结合两步接收的 PKCE 相关参数进行校验</li>
+<li>发起请求授权时携带 <strong>code_challenge</strong> 和 <strong>code_challenge_method</strong>。如果 hash 算法是 SHA-256，则 code_challenge_method 是 S256</li>
+<li>在使用 code 换取 access_token 时携带 <strong>code_verifier</strong>。授权服务将结合两步接收的 PKCE 相关参数进行校验</li>
 </ol>
-<h2 id="Token-保存和更新"><a href="#Token-保存和更新" class="headerlink" title="Token 保存和更新"></a>Token 保存和更新</h2><p>Web 客户端可以使用加密的 HTTP Cookie（iron-session）保存 token。桌面客户端可以使用系统<code>钥匙串</code>保存 token。</p>
-<p>更新 token 需要用到 <code>grant_type=refresh_token</code> 刷新流程，携带 <em>code 换 access_token</em> 时返回的 <code>refresh_token</code> 调用 token 接口即可</p>
+<h2 id="Token-保存和更新"><a href="#Token-保存和更新" class="headerlink" title="Token 保存和更新"></a>Token 保存和更新</h2><p>Web 客户端可以使用加密的 HTTP Cookie（iron-session）保存 token。桌面客户端可以使用系统<strong>钥匙串</strong>保存 token。</p>
+<p>更新 token 需要用到 <code>grant_type=refresh_token</code> 刷新流程，携带 <em>code 换 access_token</em> 时返回的 refresh_token 调用 token 接口即可</p>
 <h2 id="State"><a href="#State" class="headerlink" title="State"></a>State</h2><p>state 参数是防止 CSRF 攻击 的重要机制：客户端生成随机 state 并保存，发起授权时携带此参数，回调时客户端需验证 state 是否匹配</p>
 <h2 id="获取授权相关配置"><a href="#获取授权相关配置" class="headerlink" title="获取授权相关配置"></a>获取授权相关配置</h2><p>授权流程涉及到多个 URL 的调用，可能还需知道授权服务支持的授权类型、PKCE 支持的算法等。若服务提供 OIDC Discovery，可通过 <code>$baseUrl/.well-known/openid-configuration</code> 获取元数据；若非 OIDC，也可参考 OAuth 2.0 Authorization Server Metadata（RFC 8414）端点约定。</p>
 
