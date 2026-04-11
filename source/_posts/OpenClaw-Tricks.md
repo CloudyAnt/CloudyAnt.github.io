@@ -16,8 +16,8 @@ For basic knowledges and usages about openclaw just check its [github page](http
 
 ## Empowerment
 
-To make it really open 'claw', it's necessary to grant it the access to `exec` command, otherwise it's just a 'chatter'. 
-To do so, edit the `openclaw.json`:
+To make it really open **claw**, it's necessary to grant it the access to `exec` command, otherwise it's just a **chatter**. 
+To do so, edit the **openclaw.json**:
 
 ```json
  "tools": {
@@ -37,7 +37,7 @@ Skills can be found at [clawhub](https://clawhub.ai/), [skills.sh](https://skill
 
 ## Model Config
 
-You can edit the `openclaw.json` directly to add models, but it's more suggested to use the `openclaw onboard` command instead, even though it feels a litter semantically incorrect.
+You can edit the **openclaw.json** directly to add models, but it's more suggested to use the `openclaw onboard` command instead, even though it feels a litter semantically incorrect.
 
 ## Channel Config
 
@@ -45,7 +45,7 @@ Add any social media channel will give you the ability to dictate that lobster r
 
 **QQ Bot**
 
-Get an `app id` and `app secret` first at [here](https://q.qq.com/qqbot/openclaw/index.html), then:
+Get an *app id* and *app secret* first at [here](https://q.qq.com/qqbot/openclaw/index.html), then:
 
 ```shell
 # Install the plugin

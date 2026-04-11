@@ -19,7 +19,7 @@ OAuth2 的技术规范和本文用到的相关术语定义可参考 [RFC 6749](h
 
 ## 通用授权时序图
 
-业界普遍使用 `Authorization Code` 授权类型（Grant Type）。不同客户端的登录流程大致是一致的：
+业界普遍使用 **Authorization Code** 授权类型（Grant Type）。不同客户端的登录流程大致是一致的：
 
 ```mermaid
 sequenceDiagram
@@ -53,17 +53,17 @@ sequenceDiagram
 
 ## 客户端授权流程差异
 
-`Authorization Code` 授权类型要求必须通过浏览器进行授权。对于 Web 客户端，使用浏览器重定向即可实现以上流程。而对于非页面项目，就需要在登录时打开浏览器，并等待回调。切换应用导致了客户端授权流程的差异，即上图中标为 `critical` 的部分。
+**Authorization Code** 授权类型要求必须通过浏览器进行授权。对于 Web 客户端，使用浏览器重定向即可实现以上流程。而对于非页面项目，就需要在登录时打开浏览器，并等待回调。切换应用导致了客户端授权流程的差异，即上图中标为 **critical** 的部分。
 
 ### 授权流程差异
 
-授权流程基本和通用授权时序图一致，`客户端` 和 `用户代理` 其实都是浏览器，只是在不同的地址
+授权流程基本和通用授权时序图一致，**客户端** 和 **用户代理** 其实都是浏览器，只是在不同的地址
 
 ### 环回地址重定向回调流程
 
 一般授权服务会支持环回地址重定向。使用环回地址回调时，客户端会监听本地回调地址，比如 *http://127.0.0.1:65143/auth/callback*（端口通常由客户端动态分配并在发起授权时带上）。对应地，授权服务需要允许 *http://127.0.0.1:{port}/auth/callback* 这类回调地址模式。
 
-> 如果你在开发 JetBrains IDE 插件，可以使用其内置的服务器（常见端口是 `63342`）
+> 如果你在开发 JetBrains IDE 插件，可以使用其内置的服务器（常见端口是 63342）
 
 授权回调部分流程是：
 
@@ -90,7 +90,7 @@ sequenceDiagram
 
 有些程序会在系统中注册自定义协议。以 VSCode 为例，使用浏览器访问 `vscode://...` ，浏览器会弹框提示打开对应的应用。利用这一技术可以实现更流畅的 OAuth2 桌面应用的登录
 
-但是直接使用会带来一个体验问题。浏览器跳转到自定义协议后会切到客户端，浏览器页签可能停留在空白页、提示页或中断态。为避免此问题，我们使用`中间页`方案：回调时先跳转到中间页，再由中间页访问自定义协议打开客户端，并在浏览器展示明确的成功/失败提示
+但是直接使用会带来一个体验问题。浏览器跳转到自定义协议后会切到客户端，浏览器页签可能停留在空白页、提示页或中断态。为避免此问题，我们使用**中间页**方案：回调时先跳转到中间页，再由中间页访问自定义协议打开客户端，并在浏览器展示明确的成功/失败提示
 
 因此，中间页重定向回调流程是：
 
@@ -115,17 +115,17 @@ sequenceDiagram
 PKCE（Proof Key of Code Exchange）工作流程如下：
 
 1. 生成 PKCE 相关参数
-    - 生成一个高熵的随机字符串作为 `code_verifier`
+    - 生成一个高熵的随机字符串作为 **code_verifier**
     - 选择一个 hash 算法，一般是 SHA-256
-    - 通过 `BASE64URL-ENCODE(SHA256(ASCII(code_verifier)))` 获取 `code_challenge`（无 `=` padding）
-2. 发起请求授权时携带 `code_challenge` 和 `code_challenge_method`。如果 hash 算法是 SHA-256，则 `code_challenge_method` 是 `S256`
-3. 在使用 code 换取 access_token 时携带 `code_verifier`。授权服务将结合两步接收的 PKCE 相关参数进行校验
+    - 通过 `BASE64URL-ENCODE(SHA256(ASCII(code_verifier)))` 获取 **code_challenge**（无 = padding）
+2. 发起请求授权时携带 **code_challenge** 和 **code_challenge_method**。如果 hash 算法是 SHA-256，则 code_challenge_method 是 S256
+3. 在使用 code 换取 access_token 时携带 **code_verifier**。授权服务将结合两步接收的 PKCE 相关参数进行校验
 
 ## Token 保存和更新
 
-Web 客户端可以使用加密的 HTTP Cookie（iron-session）保存 token。桌面客户端可以使用系统`钥匙串`保存 token。
+Web 客户端可以使用加密的 HTTP Cookie（iron-session）保存 token。桌面客户端可以使用系统**钥匙串**保存 token。
 
-更新 token 需要用到 `grant_type=refresh_token` 刷新流程，携带 *code 换 access_token* 时返回的 `refresh_token` 调用 token 接口即可
+更新 token 需要用到 `grant_type=refresh_token` 刷新流程，携带 *code 换 access_token* 时返回的 refresh_token 调用 token 接口即可
 
 ## State
 

@@ -1,5 +1,5 @@
 ---
-title: Armbian-Tricks
+title: Armbian Tricks
 date: 2026-04-01 17:46:00
 tags:
     - OS
