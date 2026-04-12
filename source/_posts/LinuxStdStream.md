@@ -1,8 +1,8 @@
 ---
-title: Standard Input & Output
+title: Linux 标准数据流 (Standard Stream)
 date: 2026-04-12 11:00:00
 categories:
-  - CS
+  - Linux
 tags:
   - standard stream
   - redirection
@@ -10,8 +10,8 @@ tags:
 
 ## 标准数据流 (Standard Stream)
 
-Linux 命令被执行后，会产生三个数据流 stdin stdout stderr
-stdin 标准输入，来自键盘输入、pipe、here-document、here-string 或文件等。stdout stderr 标准输出和标准错误输出，由程序决定流向终端（默认）、pipe 或文件等
+Linux 命令执行时，通常会打开三个标准数据流：stdin、stdout、stderr
+stdin 标准输入，来自键盘输入、pipe、here-document、here-string 或文件等。stdout 和 stderr 分别是标准输出和标准错误输出，默认都流向终端，也可以被重定向到 pipe 或文件等
 
 ## 文件描述符 (File Descriptors)
 
@@ -31,9 +31,11 @@ echo hello >> old
 # 重定向 stdout 到 stderr
 echo hello >&2 
 
-# 重定向 stderr 到 stdout
+# 重定向 stderr 到当前 stdout 的目标
 command 2>&1 
-# 某些环境里 &> 等同于 2>&1
+
+# 在 bash/zsh 中，&> file 表示 stdout 和 stderr 都重定向到 file（非 POSIX 写法）
+command &> log
 
 # 使用 stderr 替换文件内容
 command 2> new
@@ -43,9 +45,9 @@ command 2>> old
 
 # 重定向所有输出到文件
 command > log 2>&1 
-# 要先重定向 stdout 到文件，再重定向 stderr 到 stderr
+# 要先重定向 stdout 到文件，再重定向 stderr 到 stdout
 # 若反之，stderr 将被定向到 stdout 的原先的目的地（通常是终端）
-# 这行命令也可以写成 command 2> log >&2
+# 在 bash/zsh 中，这行命令也可写成 command &> log（非 POSIX 写法）
 ```
 
 ### 指定 stdin 输入源
@@ -88,7 +90,7 @@ echo 123 | wc
 # 输出：1	  1   4
 ```
 
-process substitution。将程序执行结果作为输入，与 pipe 的不同是，首命令不创建子脚本而是在当前环境中运行
+process substitution。将命令输出以临时文件描述符路径的形式传给另一个命令。与 pipe 不同的是，它更适合需要“文件名参数”的场景（如 diff）。这里面的命令通常仍在子进程中执行
 
 ```shell
 cat <(echo 123) <(echo 456)
@@ -100,18 +102,20 @@ diff <(ls *.c | cut -d. -f1) <(ls *.out | cut -d. -f1)
 ## 其他
 
 ### 输出到文件的过程中可以移动、重命名或删除文件
+
 在同一个文件系统下移动或重命名文件，仅改变访问路径或文件名，其在磁盘上的位置，即索引（inode）并不改变。而程序正是通过索引来找文件的
 删除文件后，不能再通过常规的方式访问到文件，但程序依然可以通过索引来访问文件。这些文件只有在程序关闭文件描述符后才真正被释放（会造成实际的磁盘占用比系统报告的大）
 
 ### 判断输出目的地
-一个常见的方法是使用 test 命令（也可使用 [ 和 ]）与 -t 选项，来检查文件描述符（如 1 代表 stdout）是否与终端相连。-t 选项会检查给定的文件描述符号是否开启了终端：
+
+一个常见的方法是使用 test 命令（也可使用 [ 和 ]）与 -t 选项，来检查文件描述符（如 1 代表 stdout）是否与终端相连。-t 选项会检查给定文件描述符是否连接到终端：
 if [ -t 1 ]; then
     echo "输出到终端"
 else
     echo "输出被重定向到文件或其他地方"
 fi
 
-通过这个方法可以向不同的输出目的地输出不同的结果，linux 命令如 ls、git 等都有此优化。
+通过这个方法可以向不同的输出目的地输出不同的结果，Linux 命令如 ls、git 等都有类似优化。
 
 ---
 
