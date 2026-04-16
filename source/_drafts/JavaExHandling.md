@@ -2,9 +2,9 @@
 title: Java Exception Handling
 date: 2026-04-10 21:36:00
 categories:
-    - java
+    - Java
 tags:
-    - language basic
+    - Language basic
 ---
 
 ## OOM

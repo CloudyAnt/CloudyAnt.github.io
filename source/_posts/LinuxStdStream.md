@@ -4,8 +4,8 @@ date: 2026-04-12 11:00:00
 categories:
   - Linux
 tags:
-  - standard stream
-  - redirection
+  - Standard Stream
+  - Redirection
 ---
 
 ## 标准数据流 (Standard Stream)
@@ -109,11 +109,14 @@ diff <(ls *.c | cut -d. -f1) <(ls *.out | cut -d. -f1)
 ### 判断输出目的地
 
 一个常见的方法是使用 test 命令（也可使用 [ 和 ]）与 -t 选项，来检查文件描述符（如 1 代表 stdout）是否与终端相连。-t 选项会检查给定文件描述符是否连接到终端：
+
+```shell
 if [ -t 1 ]; then
     echo "输出到终端"
 else
     echo "输出被重定向到文件或其他地方"
 fi
+```
 
 通过这个方法可以向不同的输出目的地输出不同的结果，Linux 命令如 ls、git 等都有类似优化。
 
