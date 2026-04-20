@@ -20,30 +20,30 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"cloudyant.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="创建和部署：https:&#x2F;&#x2F;hexo.io&#x2F;docs&#x2F;github-pages.html 文章置顶：https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;33617563">
+    <meta name="description" content="An overview of what a TCP connection is and why HTTP&#x2F;2 multiplexing works. TCP connection essenceOn the server side, a TCP connection is represented by a socket plus kernel state (often implement">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hexo + GithubPages">
-<meta property="og:url" content="https://cloudyant.github.io/2022/07/21/HexoRunOnGithubPages/index.html">
+<meta property="og:title" content="TCP Connection Overview">
+<meta property="og:url" content="https://cloudyant.github.io/2026/04/20/TCPOverview/index.html">
 <meta property="og:site_name" content="柴家琪的博客 | Blog of ChaiJiaqi">
-<meta property="og:description" content="创建和部署：https:&#x2F;&#x2F;hexo.io&#x2F;docs&#x2F;github-pages.html 文章置顶：https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;33617563">
+<meta property="og:description" content="An overview of what a TCP connection is and why HTTP&#x2F;2 multiplexing works. TCP connection essenceOn the server side, a TCP connection is represented by a socket plus kernel state (often implement">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2022-07-21T08:08:31.000Z">
+<meta property="article:published_time" content="2026-04-20T12:35:00.000Z">
 <meta property="article:modified_time" content="2026-04-20T14:53:04.227Z">
 <meta property="article:author" content="柴家琪(CHAI Jiaqi)">
-<meta property="article:tag" content="Hexo">
-<meta property="article:tag" content="GitHub Pages">
-<meta property="article:tag" content="Static Site">
+<meta property="article:tag" content="HTTP">
+<meta property="article:tag" content="HTTP&#x2F;2">
+<meta property="article:tag" content="TCP">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://cloudyant.github.io/2022/07/21/HexoRunOnGithubPages/">
+<link rel="canonical" href="https://cloudyant.github.io/2026/04/20/TCPOverview/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://cloudyant.github.io/2022/07/21/HexoRunOnGithubPages/","path":"2022/07/21/HexoRunOnGithubPages/","title":"Hexo + GithubPages"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://cloudyant.github.io/2026/04/20/TCPOverview/","path":"2026/04/20/TCPOverview/","title":"TCP Connection Overview"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Hexo + GithubPages | 柴家琪的博客 | Blog of ChaiJiaqi</title>
+<title>TCP Connection Overview | 柴家琪的博客 | Blog of ChaiJiaqi</title>
   
 
 
@@ -116,7 +116,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text"></span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP-connection-essence"><span class="nav-number">1.</span> <span class="nav-text">TCP connection essence</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP-2-Multiplexing"><span class="nav-number">2.</span> <span class="nav-text">HTTP&#x2F;2 Multiplexing</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Weakness"><span class="nav-number">2.1.</span> <span class="nav-text">Weakness</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Header-Overhead"><span class="nav-number">2.2.</span> <span class="nav-text">Header Overhead</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -175,7 +175,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://cloudyant.github.io/2022/07/21/HexoRunOnGithubPages/">
+    <link itemprop="mainEntityOfPage" href="https://cloudyant.github.io/2026/04/20/TCPOverview/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -188,12 +188,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Hexo + GithubPages | 柴家琪的博客 | Blog of ChaiJiaqi">
+      <meta itemprop="name" content="TCP Connection Overview | 柴家琪的博客 | Blog of ChaiJiaqi">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Hexo + GithubPages
+          TCP Connection Overview
         </h1>
 
         <div class="post-meta-container">
@@ -203,15 +203,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
+      
 
-      <time title="Created: 2022-07-21 16:08:31" itemprop="dateCreated datePublished" datetime="2022-07-21T16:08:31+08:00">2022-07-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-04-20 22:53:04" itemprop="dateModified" datetime="2026-04-20T22:53:04+08:00">2026-04-20</time>
+      <time title="Created: 2026-04-20 20:35:00 / Modified: 22:53:04" itemprop="dateCreated datePublished" datetime="2026-04-20T20:35:00+08:00">2026-04-20</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -219,11 +213,7 @@
       </span>
       <span class="post-meta-item-text">In</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Hexo/" itemprop="url" rel="index"><span itemprop="name">Hexo</span></a>
-        </span>
-          , 
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Hexo/GitHub-Pages/" itemprop="url" rel="index"><span itemprop="name">GitHub Pages</span></a>
+          <a href="/categories/Network/" itemprop="url" rel="index"><span itemprop="name">Network</span></a>
         </span>
     </span>
 
@@ -236,8 +226,36 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h1 id=""><a href="#" class="headerlink" title=""></a></h1><p>创建和部署：<br><a target="_blank" rel="noopener" href="https://hexo.io/docs/github-pages.html">https://hexo.io/docs/github-pages.html</a></p>
-<p>文章置顶：<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/33617563">https://zhuanlan.zhihu.com/p/33617563</a></p>
+    <div class="post-body" itemprop="articleBody"><p>An overview of what a TCP connection is and why HTTP&#x2F;2 multiplexing works.</p>
+<h2 id="TCP-connection-essence"><a href="#TCP-connection-essence" class="headerlink" title="TCP connection essence"></a>TCP connection essence</h2><p>On the server side, a TCP connection is represented by a socket plus kernel state (often implemented as data structures in the OS network stack).</p>
+<p>That state includes items such as:</p>
+<ol>
+<li>Source and destination IP addresses, ports, and protocol</li>
+<li>Sequence numbers</li>
+<li>Acknowledgment numbers</li>
+<li>Sliding-window information</li>
+<li>Current TCP state (for example, <code>ESTABLISHED</code>, <code>FIN_WAIT_1</code>)</li>
+</ol>
+<p>Since socket is just a file, an idle connection usually does not consume CPU time continuously. If a persistent connection is idle, the main costs are memory and file descriptor (FD) usage, not a dedicated thread running all the time.</p>
+<p>“Close connection” means releasing the kernel resources for that socket and closing its FD. In normal TCP termination, this happens after the TCP four-way handshake completes.</p>
+<p>This also explains how <code>Connection: keep-alive</code> works in HTTP&#x2F;1.1: the client requests that the connection remain open for reuse. To avoid accumulating stale connections, servers still close idle connections after a timeout (Keep-Alive timeout) or after handling a configured maximum number of requests.</p>
+<h2 id="HTTP-2-Multiplexing"><a href="#HTTP-2-Multiplexing" class="headerlink" title="HTTP&#x2F;2 Multiplexing"></a>HTTP&#x2F;2 Multiplexing</h2><p><strong>Multiplexing</strong> is a core feature of HTTP&#x2F;2. It allows multiple request&#x2F;response exchanges to be active at the same time over one TCP connection.</p>
+<p>As mentioned earlier, one TCP connection has one sequence space and one TCP state machine. So how can multiple HTTP messages run concurrently? The connection itself is still one TCP connection; multiplexing is implemented at the HTTP&#x2F;2 framing layer.</p>
+<p>HTTP&#x2F;2 introduces <strong>Stream</strong> and <strong>Frame</strong>:</p>
+<ol>
+<li>A <strong>Stream</strong> is a logical bidirectional channel for one request&#x2F;response exchange and is identified by a <strong>Stream ID</strong>.</li>
+<li>A <strong>Frame</strong> is the smallest protocol unit. Headers and body data are split into frames, and each frame carries its Stream ID.</li>
+</ol>
+<p>Frames from different streams can be interleaved on the wire. The receiver uses Stream IDs to reconstruct each stream correctly.</p>
+<p>Because of this model, HTTP&#x2F;2 is naturally used with persistent connections.</p>
+<p>From TCP’s perspective, it is still ordinary TCP byte-stream transport.</p>
+<h3 id="Weakness"><a href="#Weakness" class="headerlink" title="Weakness"></a>Weakness</h3><p>The major weakness is <em>TCP Head-of-Line (HOL) blocking</em>: if one TCP packet is lost, later bytes in the same TCP stream cannot be delivered to the application until retransmission succeeds, even if those bytes belong to other HTTP&#x2F;2 streams. <strong>HTTP&#x2F;3</strong> addresses this at the transport layer by using QUIC over UDP.</p>
+<h3 id="Header-Overhead"><a href="#Header-Overhead" class="headerlink" title="Header Overhead"></a>Header Overhead</h3><p>If each frame carries Stream ID information, does that create extra overhead? It does add some framing overhead, but HTTP&#x2F;2 reduces header cost with <code>HPACK</code> compression:</p>
+<ol>
+<li>Static table: common header names and values can be represented by indexes</li>
+<li>Dynamic table: recently seen headers can be reused by index (for example, repeated <code>user-agent</code> or <code>cookie</code> fields)</li>
+</ol>
+<p>Overall, HTTP&#x2F;2 multiplexing is more complex than HTTP&#x2F;1.1, but in many real scenarios it improves latency and connection efficiency.</p>
 
     </div>
 
@@ -247,23 +265,20 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/Hexo/" rel="tag"># Hexo</a>
-              <a href="/tags/GitHub-Pages/" rel="tag"># GitHub Pages</a>
-              <a href="/tags/Static-Site/" rel="tag"># Static Site</a>
+              <a href="/tags/HTTP/" rel="tag"># HTTP</a>
+              <a href="/tags/HTTP-2/" rel="tag"># HTTP/2</a>
+              <a href="/tags/TCP/" rel="tag"># TCP</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2022/07/20/hello/" rel="prev" title="👋 欢迎访问 | Welcome">
-                  <i class="fa fa-angle-left"></i> 👋 欢迎访问 | Welcome
+                <a href="/2026/04/15/IJPluginVsVSCodeExt/" rel="prev" title="IntelliJ Plugin vs VSCode Extension">
+                  <i class="fa fa-angle-left"></i> IntelliJ Plugin vs VSCode Extension
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2026/03/07/PromptEngineering/" rel="next" title="Prompt Engineering">
-                  Prompt Engineering <i class="fa fa-angle-right"></i>
-                </a>
             </div>
           </div>
     </footer>

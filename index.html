@@ -121,18 +121,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-count">10</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-count">14</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">27</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -202,7 +202,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-04-16 13:44:45" itemprop="dateModified" datetime="2026-04-16T13:44:45+08:00">2026-04-16</time>
+      <time title="Modified: 2026-04-20 22:53:04" itemprop="dateModified" datetime="2026-04-20T22:53:04+08:00">2026-04-20</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -225,6 +225,114 @@
     
     <div class="post-body" itemprop="articleBody">
           <h2 id="欢迎访问此站点！你可以先查看关于页面了解更多。-Welcome-to-this-site-You-can-start-by-checking-the-About-page-to-learn-more"><a href="#欢迎访问此站点！你可以先查看关于页面了解更多。-Welcome-to-this-site-You-can-start-by-checking-the-About-page-to-learn-more" class="headerlink" title="欢迎访问此站点！你可以先查看关于页面了解更多。| Welcome to this site! You can start by checking the About page to learn more."></a>欢迎访问此站点！你可以先查看<a href="/about">关于</a>页面了解更多。| Welcome to this site! You can start by checking the <a href="/about">About</a> page to learn more.</h2>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://cloudyant.github.io/2026/04/20/TCPOverview/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="柴家琪(CHAI Jiaqi)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="柴家琪的博客 | Blog of ChaiJiaqi">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | 柴家琪的博客 | Blog of ChaiJiaqi">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/04/20/TCPOverview/" class="post-title-link" itemprop="url">TCP Connection Overview</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2026-04-20 20:35:00 / Modified: 22:53:04" itemprop="dateCreated datePublished" datetime="2026-04-20T20:35:00+08:00">2026-04-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Network/" itemprop="url" rel="index"><span itemprop="name">Network</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>An overview of what a TCP connection is and why HTTP&#x2F;2 multiplexing works.</p>
+<h2 id="TCP-connection-essence"><a href="#TCP-connection-essence" class="headerlink" title="TCP connection essence"></a>TCP connection essence</h2><p>On the server side, a TCP connection is represented by a socket plus kernel state (often implemented as data structures in the OS network stack).</p>
+<p>That state includes items such as:</p>
+<ol>
+<li>Source and destination IP addresses, ports, and protocol</li>
+<li>Sequence numbers</li>
+<li>Acknowledgment numbers</li>
+<li>Sliding-window information</li>
+<li>Current TCP state (for example, <code>ESTABLISHED</code>, <code>FIN_WAIT_1</code>)</li>
+</ol>
+<p>Since socket is just a file, an idle connection usually does not consume CPU time continuously. If a persistent connection is idle, the main costs are memory and file descriptor (FD) usage, not a dedicated thread running all the time.</p>
+<p>“Close connection” means releasing the kernel resources for that socket and closing its FD. In normal TCP termination, this happens after the TCP four-way handshake completes.</p>
+<p>This also explains how <code>Connection: keep-alive</code> works in HTTP&#x2F;1.1: the client requests that the connection remain open for reuse. To avoid accumulating stale connections, servers still close idle connections after a timeout (Keep-Alive timeout) or after handling a configured maximum number of requests.</p>
+<h2 id="HTTP-2-Multiplexing"><a href="#HTTP-2-Multiplexing" class="headerlink" title="HTTP&#x2F;2 Multiplexing"></a>HTTP&#x2F;2 Multiplexing</h2><p><strong>Multiplexing</strong> is a core feature of HTTP&#x2F;2. It allows multiple request&#x2F;response exchanges to be active at the same time over one TCP connection.</p>
+<p>As mentioned earlier, one TCP connection has one sequence space and one TCP state machine. So how can multiple HTTP messages run concurrently? The connection itself is still one TCP connection; multiplexing is implemented at the HTTP&#x2F;2 framing layer.</p>
+<p>HTTP&#x2F;2 introduces <strong>Stream</strong> and <strong>Frame</strong>:</p>
+<ol>
+<li>A <strong>Stream</strong> is a logical bidirectional channel for one request&#x2F;response exchange and is identified by a <strong>Stream ID</strong>.</li>
+<li>A <strong>Frame</strong> is the smallest protocol unit. Headers and body data are split into frames, and each frame carries its Stream ID.</li>
+</ol>
+<p>Frames from different streams can be interleaved on the wire. The receiver uses Stream IDs to reconstruct each stream correctly.</p>
+<p>Because of this model, HTTP&#x2F;2 is naturally used with persistent connections.</p>
+<p>From TCP’s perspective, it is still ordinary TCP byte-stream transport.</p>
+<h3 id="Weakness"><a href="#Weakness" class="headerlink" title="Weakness"></a>Weakness</h3><p>The major weakness is <em>TCP Head-of-Line (HOL) blocking</em>: if one TCP packet is lost, later bytes in the same TCP stream cannot be delivered to the application until retransmission succeeds, even if those bytes belong to other HTTP&#x2F;2 streams. <strong>HTTP&#x2F;3</strong> addresses this at the transport layer by using QUIC over UDP.</p>
+<h3 id="Header-Overhead"><a href="#Header-Overhead" class="headerlink" title="Header Overhead"></a>Header Overhead</h3><p>If each frame carries Stream ID information, does that create extra overhead? It does add some framing overhead, but HTTP&#x2F;2 reduces header cost with <code>HPACK</code> compression:</p>
+<ol>
+<li>Static table: common header names and values can be represented by indexes</li>
+<li>Dynamic table: recently seen headers can be reused by index (for example, repeated <code>user-agent</code> or <code>cookie</code> fields)</li>
+</ol>
+<p>Overall, HTTP&#x2F;2 multiplexing is more complex than HTTP&#x2F;1.1, but in many real scenarios it improves latency and connection efficiency.</p>
+
       
     </div>
 
@@ -286,7 +394,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-04-16 13:44:45" itemprop="dateModified" datetime="2026-04-16T13:44:45+08:00">2026-04-16</time>
+      <time title="Modified: 2026-04-20 22:53:04" itemprop="dateModified" datetime="2026-04-20T22:53:04+08:00">2026-04-20</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -485,7 +593,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-04-16 13:44:45" itemprop="dateModified" datetime="2026-04-16T13:44:45+08:00">2026-04-16</time>
+      <time title="Modified: 2026-04-20 22:53:04" itemprop="dateModified" datetime="2026-04-20T22:53:04+08:00">2026-04-20</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -595,7 +703,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-04-16 13:44:45" itemprop="dateModified" datetime="2026-04-16T13:44:45+08:00">2026-04-16</time>
+      <time title="Modified: 2026-04-20 22:53:04" itemprop="dateModified" datetime="2026-04-20T22:53:04+08:00">2026-04-20</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -694,7 +802,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-04-16 13:44:45" itemprop="dateModified" datetime="2026-04-16T13:44:45+08:00">2026-04-16</time>
+      <time title="Modified: 2026-04-20 22:53:04" itemprop="dateModified" datetime="2026-04-20T22:53:04+08:00">2026-04-20</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -834,7 +942,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-04-16 13:44:45" itemprop="dateModified" datetime="2026-04-16T13:44:45+08:00">2026-04-16</time>
+      <time title="Modified: 2026-04-20 22:53:04" itemprop="dateModified" datetime="2026-04-20T22:53:04+08:00">2026-04-20</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1004,7 +1112,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-04-16 13:44:45" itemprop="dateModified" datetime="2026-04-16T13:44:45+08:00">2026-04-16</time>
+      <time title="Modified: 2026-04-20 22:53:04" itemprop="dateModified" datetime="2026-04-20T22:53:04+08:00">2026-04-20</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1106,7 +1214,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-04-16 13:44:45" itemprop="dateModified" datetime="2026-04-16T13:44:45+08:00">2026-04-16</time>
+      <time title="Modified: 2026-04-20 22:53:04" itemprop="dateModified" datetime="2026-04-20T22:53:04+08:00">2026-04-20</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1217,7 +1325,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-04-16 13:44:45" itemprop="dateModified" datetime="2026-04-16T13:44:45+08:00">2026-04-16</time>
+      <time title="Modified: 2026-04-20 22:53:04" itemprop="dateModified" datetime="2026-04-20T22:53:04+08:00">2026-04-20</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
