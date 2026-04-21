@@ -8,7 +8,6 @@ categories:
 date: 2026-04-15 18:06:00
 ---
 
-
 This article compares IntelliJ Platform plugins and VSCode extensions from an architecture view, for beginners.
 
 ## They run differently

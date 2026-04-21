@@ -1,10 +1,10 @@
 ---
 title: Java Tools
-date: 2026-04-10 21:35:00
+date: 2022-04-10 21:35:00
 categories:
-    - java
+    - Java
 tags:
-    - language basic
+    - Language basic
 ---
 
 Description of common built-in tools are `jps`, `jstat`, `jmap`, `jinfo`, `jhat`, `jstack`, `jconsole`.

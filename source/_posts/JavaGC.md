@@ -1,10 +1,10 @@
 ---
 title: Java GC
-date: 2026-04-10 10:30:00
+date: 2022-04-10 10:30:00
 categories:
-    - java
+    - Java
 tags:
-    - language basic
+    - Language basic
 ---
 
 Java GC fundamentals and modern collector internals.

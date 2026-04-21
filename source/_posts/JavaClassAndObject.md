@@ -1,6 +1,6 @@
 ---
 title: Java Class & Object
-date: 2026-04-11 16:11:00
+date: 2022-04-11 16:11:00
 categories:
     - java
 tags:

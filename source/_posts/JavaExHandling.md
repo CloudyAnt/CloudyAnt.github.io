@@ -1,6 +1,6 @@
 ---
 title: Java Exception Handling
-date: 2026-04-10 21:36:00
+date: 2022-04-10 21:36:00
 categories:
     - Java
 tags:
