@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha256-CTSx/A06dm1B063156EVh15m6Y67pAjZZaQc89LLSrU=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"cloudyant.github.io","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.18.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Java GC fundamentals and modern collector internals. JVM Heap LayoutThe JVM heap is divided into two main areas:  Young Generation: Where newly allocated objects live. Split into: Eden: Most objects a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java GC">
+<meta property="og:url" content="https://cloudyant.github.io/2022/04/10/JavaGC/index.html">
+<meta property="og:site_name" content="柴家琪的博客 | Blog of ChaiJiaqi">
+<meta property="og:description" content="Java GC fundamentals and modern collector internals. JVM Heap LayoutThe JVM heap is divided into two main areas:  Young Generation: Where newly allocated objects live. Split into: Eden: Most objects a">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-04-10T02:30:00.000Z">
+<meta property="article:modified_time" content="2026-04-21T07:17:52.918Z">
+<meta property="article:author" content="柴家琪(CHAI Jiaqi)">
+<meta property="article:tag" content="Language basic">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://cloudyant.github.io/2022/04/10/JavaGC/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://cloudyant.github.io/2022/04/10/JavaGC/","path":"2022/04/10/JavaGC/","title":"Java GC"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Java GC | 柴家琪的博客 | Blog of ChaiJiaqi</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">柴家琪的博客 | Blog of ChaiJiaqi</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">远方 依然泛着微光</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM-Heap-Layout"><span class="nav-number">1.</span> <span class="nav-text">JVM Heap Layout</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Object-Lifecycle"><span class="nav-number">2.</span> <span class="nav-text">Object Lifecycle</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GC-Metrics"><span class="nav-number">3.</span> <span class="nav-text">GC Metrics</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Throughput"><span class="nav-number">3.1.</span> <span class="nav-text">Throughput</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Latency-Pause-Time"><span class="nav-number">3.2.</span> <span class="nav-text">Latency (Pause Time)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Footprint"><span class="nav-number">3.3.</span> <span class="nav-text">Footprint</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GC-Root-Tracing"><span class="nav-number">4.</span> <span class="nav-text">GC Root Tracing</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Tri-color-Marking"><span class="nav-number">5.</span> <span class="nav-text">Tri-color Marking</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Process"><span class="nav-number">5.1.</span> <span class="nav-text">Process</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#The-Floating-Garbage-Problem"><span class="nav-number">5.2.</span> <span class="nav-text">The Floating Garbage Problem</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#The-Lost-Object-Problem"><span class="nav-number">5.3.</span> <span class="nav-text">The Lost Object Problem</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Collectors"><span class="nav-number">6.</span> <span class="nav-text">Collectors</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Serial-GC"><span class="nav-number">6.1.</span> <span class="nav-text">Serial GC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Parallel-GC"><span class="nav-number">6.2.</span> <span class="nav-text">Parallel GC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CMS"><span class="nav-number">6.3.</span> <span class="nav-text">CMS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#G1"><span class="nav-number">6.4.</span> <span class="nav-text">G1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Mixed-GC"><span class="nav-number">6.4.1.</span> <span class="nav-text">Mixed GC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Humongous-Objects"><span class="nav-number">6.4.2.</span> <span class="nav-text">Humongous Objects</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ZGC"><span class="nav-number">6.5.</span> <span class="nav-text">ZGC</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Reference-Coloring"><span class="nav-number">6.5.1.</span> <span class="nav-text">Reference Coloring</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ZPage"><span class="nav-number">6.5.2.</span> <span class="nav-text">ZPage</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Marking-Phase"><span class="nav-number">6.5.3.</span> <span class="nav-text">Marking Phase</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Relocation-Phase"><span class="nav-number">6.5.4.</span> <span class="nav-text">Relocation Phase</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Remapping"><span class="nav-number">6.5.5.</span> <span class="nav-text">Remapping</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Collector-Comparison"><span class="nav-number">7.</span> <span class="nav-text">Collector Comparison</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">柴家琪(CHAI Jiaqi)</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/CloudyAnt" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;CloudyAnt" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/iiim.cloudy@gmail.com" title="E-Mail → iiim.cloudy@gmail.com" rel="noopener me"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://cloudyant.github.io/2022/04/10/JavaGC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="柴家琪(CHAI Jiaqi)">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="柴家琪的博客 | Blog of ChaiJiaqi">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Java GC | 柴家琪的博客 | Blog of ChaiJiaqi">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java GC
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-04-10 10:30:00" itemprop="dateCreated datePublished" datetime="2022-04-10T10:30:00+08:00">2022-04-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2026-04-21 15:17:52" itemprop="dateModified" datetime="2026-04-21T15:17:52+08:00">2026-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>Java GC fundamentals and modern collector internals.</p>
+<h2 id="JVM-Heap-Layout"><a href="#JVM-Heap-Layout" class="headerlink" title="JVM Heap Layout"></a>JVM Heap Layout</h2><p>The JVM heap is divided into two main areas:</p>
+<ul>
+<li><strong>Young Generation</strong>: Where newly allocated objects live. Split into:<ul>
+<li><strong>Eden</strong>: Most objects are allocated here.</li>
+<li><strong>Survivor S0 &#x2F; S1</strong>: Objects that survive a Young GC are copied between these two spaces. Each surviving object has an <em>age counter</em> incremented per GC cycle.</li>
+</ul>
+</li>
+<li><strong>Old Generation (Tenured)</strong>: Long-lived objects promoted from Young Gen after exceeding the age threshold (<code>-XX:MaxTenuringThreshold</code>, default 15).</li>
+<li><strong>Metaspace</strong> (off-heap): Stores class metadata. Replaced PermGen since Java 8.</li>
+</ul>
+<h2 id="Object-Lifecycle"><a href="#Object-Lifecycle" class="headerlink" title="Object Lifecycle"></a>Object Lifecycle</h2><ol>
+<li>New objects are allocated in <strong>Eden</strong>.</li>
+<li>When Eden fills up, a <strong>Minor GC</strong> (Young GC) is triggered. Live objects are copied to a Survivor space and their age increments.</li>
+<li>Objects exceeding the age threshold are <strong>promoted</strong> to Old Gen.</li>
+<li>When Old Gen fills up (or under certain collector-specific conditions), a <strong>Major GC</strong> or <strong>Full GC</strong> is triggered, collecting the whole heap.</li>
+</ol>
+<p>Cross-generational references (e.g. an Old Gen object referencing a Young Gen object) are tracked via a <strong>Card Table</strong> &#x2F; <strong>Remembered Set</strong>, so Minor GC does not need to scan all of Old Gen to find roots.</p>
+<h2 id="GC-Metrics"><a href="#GC-Metrics" class="headerlink" title="GC Metrics"></a>GC Metrics</h2><h3 id="Throughput"><a href="#Throughput" class="headerlink" title="Throughput"></a>Throughput</h3><p><code>(Total running time - GC time) / Total running time</code></p>
+<p>This simple formula is accurate for stop-the-world collectors like Serial and Parallel. For concurrent collectors such as CMS and G1, a parallel marking phase runs alongside application threads, which complicates the calculation. A more precise measure in CPU terms is <code>(Total CPU Cycles - GC CPU Cycles) / Total CPU Cycles</code>. In practice, people estimate by measuring business performance degradation during the concurrent phase.</p>
+<p>Ways to increase throughput:</p>
+<ol>
+<li><strong>Larger heap</strong>: Lower GC frequency, though each GC event may take longer.</li>
+<li><strong>Better GC algorithm</strong>: e.g., moving from Serial to Parallel or G1.</li>
+</ol>
+<p>Note that adding concurrency does not always increase throughput — thread-coordination overhead and Amdahl’s Law impose limits, especially on machines with few cores.</p>
+<h3 id="Latency-Pause-Time"><a href="#Latency-Pause-Time" class="headerlink" title="Latency (Pause Time)"></a>Latency (Pause Time)</h3><p>Also known as <strong>STW (Stop-The-World) time</strong> — the duration during which all application threads are suspended for GC work. This directly impacts application responsiveness.</p>
+<h3 id="Footprint"><a href="#Footprint" class="headerlink" title="Footprint"></a>Footprint</h3><p>Total memory consumed by the JVM process, including heap and off-heap areas (Metaspace, JIT code cache, etc.). Relevant in memory-constrained environments.</p>
+<h2 id="GC-Root-Tracing"><a href="#GC-Root-Tracing" class="headerlink" title="GC Root Tracing"></a>GC Root Tracing</h2><p><strong>GC Roots</strong> are the starting points for reachability analysis. Typically:</p>
+<ol>
+<li>Local variables and operand stack entries across all thread stacks</li>
+<li>Static fields and constants (class-level references)</li>
+<li>JNI references</li>
+</ol>
+<p>The GC traces the object reference graph from GC Roots. Any object that cannot be reached is eligible for collection.</p>
+<h2 id="Tri-color-Marking"><a href="#Tri-color-Marking" class="headerlink" title="Tri-color Marking"></a>Tri-color Marking</h2><h3 id="Process"><a href="#Process" class="headerlink" title="Process"></a>Process</h3><p>All objects start as <strong>white</strong>. Objects still white at the end of marking are collected.</p>
+<p>When an object is first visited, it is painted <strong>gray</strong> — visited, but its fields have not yet been scanned.</p>
+<p>Once all of an object’s fields are scanned, it is painted <strong>black</strong> — fully processed and will not be scanned again in this cycle.</p>
+<p>Because marking runs concurrently with application threads, two correctness problems can arise.</p>
+<h3 id="The-Floating-Garbage-Problem"><a href="#The-Floating-Garbage-Problem" class="headerlink" title="The Floating Garbage Problem"></a>The Floating Garbage Problem</h3><p>During marking, some already-marked (black) objects may become unreachable due to reference changes by the application. These “floating garbage” objects are missed in the current GC cycle and collected in the next one. This is generally acceptable.</p>
+<h3 id="The-Lost-Object-Problem"><a href="#The-Lost-Object-Problem" class="headerlink" title="The Lost Object Problem"></a>The Lost Object Problem</h3><p>A live object can be incorrectly collected when <strong>both</strong> conditions happen concurrently:</p>
+<ol>
+<li>A black object gains a reference to a white object.</li>
+<li>All gray objects that previously referenced that white object drop those references.</li>
+</ol>
+<p>The white object is never painted gray&#x2F;black and gets wrongly collected. The fix is to use a <strong>Write Barrier</strong> to record one of the two mutations:</p>
+<p><strong>Incremental Update</strong> (breaks condition 1 — used by CMS):<br>When a black object acquires a reference to a white object, record it.<br>After marking finishes, re-paint the recorded objects gray and re-scan them (Remark STW).</p>
+<p><strong>Snapshot At The Beginning (SATB)</strong> (breaks condition 2 — used by G1):<br>When a gray object is about to drop a reference to a white object, push that white object onto the SATB queue.<br>After marking finishes, during a Remark STW, process the SATB queue and paint those objects’ reference chains black.<br>This may produce more floating garbage but has lower re-scan overhead.</p>
+<p>The re-scan step in both approaches is called <strong>Remark</strong>.</p>
+<h2 id="Collectors"><a href="#Collectors" class="headerlink" title="Collectors"></a>Collectors</h2><h3 id="Serial-GC"><a href="#Serial-GC" class="headerlink" title="Serial GC"></a>Serial GC</h3><p>Single-threaded; stops all application threads during collection. Minimal overhead and simple implementation. Suitable for single-core environments or very small heaps.</p>
+<ul>
+<li>Young Gen: <strong>Serial</strong> (mark-copy)</li>
+<li>Old Gen: <strong>Serial Old</strong> (mark-sweep-compact)</li>
+</ul>
+<h3 id="Parallel-GC"><a href="#Parallel-GC" class="headerlink" title="Parallel GC"></a>Parallel GC</h3><p>Multi-threaded version of Serial. Uses multiple threads for GC work to maximize throughput. Was the default collector before Java 9.</p>
+<ul>
+<li>Young Gen: <strong>Parallel Scavenge</strong></li>
+<li>Old Gen: <strong>Parallel Old</strong></li>
+</ul>
+<h3 id="CMS"><a href="#CMS" class="headerlink" title="CMS"></a>CMS</h3><p><strong>Concurrent Mark-Sweep</strong>. Minimizes pause time by doing most marking work concurrently with application threads. Does not compact the heap, which causes memory fragmentation over time.</p>
+<p>Full GC (single-threaded, compacting) may be triggered if:</p>
+<ul>
+<li>Old Gen space is insufficient for promotion.</li>
+<li>No sufficiently large contiguous free space exists for a large object.</li>
+</ul>
+<p>Phases:</p>
+<ol>
+<li><strong>Initial Mark</strong> — Find root references. (STW)</li>
+<li><strong>Concurrent Mark</strong> — Traverse the reference graph. (Concurrent)</li>
+<li><strong>Remark</strong> — Re-scan mutated references via Incremental Update. (STW)</li>
+<li><strong>Concurrent Sweep</strong> — Reclaim dead objects. (Concurrent)</li>
+</ol>
+<blockquote>
+<p>CMS was deprecated in Java 9 and removed in Java 14.</p>
+</blockquote>
+<h3 id="G1"><a href="#G1" class="headerlink" title="G1"></a>G1</h3><p><strong>Garbage First</strong>. Splits the heap into equal-size <strong>Regions</strong> (~1–32 MB each). Each region can act as Eden, Survivor, or Old Gen at different times.</p>
+<p>Globally it is <strong>Mark-Sweep</strong> based; per-region it is <strong>Copying</strong> based — objects are evacuated to new regions, eliminating memory fragmentation.</p>
+<p>Normal operation involves <strong>Minor GC</strong> (Young-only) and <strong>Mixed GC</strong>. A <strong>Full GC</strong> is triggered only if G1 cannot reclaim space fast enough.</p>
+<h4 id="Mixed-GC"><a href="#Mixed-GC" class="headerlink" title="Mixed GC"></a>Mixed GC</h4><p>Triggered when Old Gen occupancy exceeds a threshold (<code>-XX:InitiatingHeapOccupancyPercent</code>, default 45%):</p>
+<ol>
+<li>Concurrent marking runs to determine region liveness.</li>
+<li>G1 selects the Old Gen regions with the most garbage (highest collection value).</li>
+<li>Mixed GC collects all Young regions plus a subset of those Old Gen regions.</li>
+</ol>
+<p>G1 spreads Old Gen collection across multiple Mixed GC cycles (<code>-XX:G1MixedGCCountTarget</code>, default 8) to stay within the pause target (<code>-XX:MaxGCPauseMillis</code>).</p>
+<h4 id="Humongous-Objects"><a href="#Humongous-Objects" class="headerlink" title="Humongous Objects"></a>Humongous Objects</h4><p>If an object’s size exceeds 50% of a region’s capacity, it is a <strong>Humongous Object</strong> and is allocated directly into one or more consecutive <strong>Humongous Regions</strong> (treated like Old Gen). Humongous objects are only collected during Mixed GC or Full GC.</p>
+<h3 id="ZGC"><a href="#ZGC" class="headerlink" title="ZGC"></a>ZGC</h3><p>The <a target="_blank" rel="noopener" href="https://docs.oracle.com/en/java/javase/25/gctuning/z-garbage-collector.html">ZGC</a> performs almost all work concurrently with application threads. Its goal is to keep STW pauses under a few milliseconds regardless of heap size.</p>
+<h4 id="Reference-Coloring"><a href="#Reference-Coloring" class="headerlink" title="Reference Coloring"></a>Reference Coloring</h4><p>ZGC stores GC state in <strong>bits of the reference pointer itself</strong> rather than in the object’s mark word or a separate bitmap. This technique is called <strong>Reference Coloring</strong>, and it only works with 64-bit references.</p>
+<p>In a 64-bit pointer, the lower 42 bits address the object; 4 middle bits encode the reference state (<code>marked0</code>, <code>marked1</code>, <code>remapped</code>, <code>finalizable</code>). Because mutating the state bits changes the virtual address, ZGC uses <strong>Multi-Mapping</strong> to ensure all those different virtual addresses map to the same physical memory page.</p>
+<h4 id="ZPage"><a href="#ZPage" class="headerlink" title="ZPage"></a>ZPage</h4><p>Similar to G1’s Region, but ZPages have three fixed size classes:</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Size</th>
+<th>Object size range</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Small</td>
+<td>2 MB</td>
+<td>&lt; 256 KB</td>
+<td>Most numerous; relocated most frequently</td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>32 MB</td>
+<td>256 KB – 4 MB</td>
+<td>Relatively stable</td>
+</tr>
+<tr>
+<td>Large</td>
+<td>N × 2 MB</td>
+<td>&gt; 4 MB</td>
+<td>Dynamic size; one object per page</td>
+</tr>
+</tbody></table>
+<p>Each ZPage has a <strong>Live Map</strong> bitmap that tracks object liveness by object offset within the page.</p>
+<h4 id="Marking-Phase"><a href="#Marking-Phase" class="headerlink" title="Marking Phase"></a>Marking Phase</h4><ol>
+<li><strong>STW</strong>: Find and mark root references.</li>
+<li><strong>Concurrent</strong>: Traverse the reference graph. <strong>Load Barriers</strong> mark any reference that is loaded but found to be unmarked.</li>
+<li><strong>STW</strong>: Handle edge cases (references modified during step 2).</li>
+<li>Each traversed reference sets <code>marked0</code> or <code>marked1</code> in the colored pointer, and the corresponding bit in the Live Map.</li>
+</ol>
+<h4 id="Relocation-Phase"><a href="#Relocation-Phase" class="headerlink" title="Relocation Phase"></a>Relocation Phase</h4><p><strong>Preparing</strong>:</p>
+<ol>
+<li>Scan all ZPages; select those with the most garbage (fewest surviving objects) into a <strong>Relocation Set</strong>.</li>
+<li>Reserve free ZPages as relocation targets.</li>
+</ol>
+<p><strong>Execution</strong>:</p>
+<ol>
+<li><strong>STW</strong>: Relocate all objects referenced by roots in the Relocation Set; update those root references.</li>
+<li><strong>Concurrent</strong>: Relocate remaining objects. Old-to-new address mappings are stored in a <strong>Forwarding Table</strong> per ZPage.</li>
+<li>Remaining stale references are fixed lazily during the next marking phase or by Load Barriers (see below).</li>
+</ol>
+<h4 id="Remapping"><a href="#Remapping" class="headerlink" title="Remapping"></a>Remapping</h4><p>When the application loads a reference pointing to an object that has been relocated, the <strong>Load Barrier</strong> intercepts it:</p>
+<ol>
+<li>If the <code>remapped</code> bit is set, return the reference as-is.</li>
+<li>Otherwise, look up the Forwarding Table, update the reference to the new address, set the <code>remapped</code> bit, and return it.</li>
+</ol>
+<p>This ensures all stale references are healed lazily without a separate STW fixup pass.</p>
+<h2 id="Collector-Comparison"><a href="#Collector-Comparison" class="headerlink" title="Collector Comparison"></a>Collector Comparison</h2><table>
+<thead>
+<tr>
+<th>Collector</th>
+<th>Primary Goal</th>
+<th>Heap Size</th>
+<th>Available Since</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Serial</td>
+<td>Simple</td>
+<td>Small</td>
+<td>Java 1</td>
+<td>Single-threaded STW</td>
+</tr>
+<tr>
+<td>Parallel</td>
+<td>Throughput</td>
+<td>Medium</td>
+<td>Java 1.4</td>
+<td>Multi-threaded STW; default pre-Java 9</td>
+</tr>
+<tr>
+<td>CMS</td>
+<td>Low latency</td>
+<td>Medium</td>
+<td>Java 1.4</td>
+<td>Fragmentation; removed in Java 14</td>
+</tr>
+<tr>
+<td>G1</td>
+<td>Balanced</td>
+<td>Large</td>
+<td>Java 7</td>
+<td>Default since Java 9</td>
+</tr>
+<tr>
+<td>ZGC</td>
+<td>Sub-ms pauses</td>
+<td>Any</td>
+<td>Java 15 (prod)</td>
+<td>Best for large heaps or strict latency</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Language-basic/" rel="tag"># Language basic</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/04/10/JavaTools/" rel="next" title="Java Tools">
+                  Java Tools <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">柴家琪(CHAI Jiaqi)</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.5.0/mermaid.min.js","integrity":"sha256-K7oJiQlDulzl24ZUFOywuYme1JqBBvQzK6m8qHjt9Gk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
